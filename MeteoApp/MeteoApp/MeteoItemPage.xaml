@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MeteoApp.MeteoItemPage">
     <StackLayout x:Name="MainLayout" Spacing="30">
-            <Label Text="{Binding Entry.Id}"
-                FontSize="55"
-                HorizontalOptions="Center" 
-                VerticalOptions="Start" />
-        </StackLayout>
+        <Label Text="{Binding Location.Name}"
+               FontSize="55"
+               HorizontalOptions="Center" 
+               VerticalOptions="Start" />
+    </StackLayout>
 </ContentPage>
-

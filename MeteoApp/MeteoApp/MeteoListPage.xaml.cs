@@ -1,4 +1,5 @@
 ﻿namespace MeteoApp;
+using MeteoApp.Models;
 
 public partial class MeteoListPage : Shell
 {
@@ -24,14 +25,19 @@ public partial class MeteoListPage : Shell
     {
         if (e.SelectedItem != null)
         {
-            Entry entry = e.SelectedItem as Entry;
-
-            var navigationParameter = new Dictionary<string, object>
+            WeatherData selectedWeather = e.SelectedItem as WeatherData;
+            
+            if (selectedWeather != null)
             {
-                { "Entry", entry }
-            };
+                var navigationParameter = new Dictionary<string, object>
+                {
+                    { "Location", selectedWeather.Location }
+                };
 
-            Shell.Current.GoToAsync($"entrydetails", navigationParameter);
+                Shell.Current.GoToAsync("entrydetails", navigationParameter);
+            }
+
+            ((ListView)sender).SelectedItem = null; // Deseleziona l'elemento dopo il click
         }
     }
 
