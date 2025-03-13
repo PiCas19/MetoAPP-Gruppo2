@@ -4,8 +4,53 @@
              x:Class="MeteoApp.MeteoItemPage">
     <StackLayout x:Name="MainLayout" Spacing="30">
         <Label Text="{Binding Location.Name}"
-               FontSize="55"
+               FontSize="30"
+               FontAttributes="Bold"
                HorizontalOptions="Center" 
                VerticalOptions="Start" />
+
+        <Image Source="{Binding WeatherIconUrl}" 
+               WidthRequest="100"
+               HeightRequest="100"
+               HorizontalOptions="Center" />
+
+        <Label Text="{Binding Weather.Description}"
+               FontSize="18"
+               HorizontalOptions="Center" />
+
+        <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto, Auto">
+            <Label Text="{Binding Temperature.Current, StringFormat='{0}°'}"
+                   FontSize="50"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Grid.Column="0"
+                   Grid.Row="0"
+                   Grid.RowSpan="2"/>
+
+            <Border Stroke="Blue"
+                    StrokeThickness="2"
+                    Padding="5"
+                    Margin="5"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    HorizontalOptions="Center">
+                <Label Text="{Binding Temperature.Min, StringFormat='{0}°'}"
+                       FontSize="18"
+                       HorizontalOptions="Center" />
+            </Border>
+
+
+            <Border Stroke="Red"
+                    StrokeThickness="2"
+                    Padding="5"
+                    Margin="5"
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    HorizontalOptions="Center">
+                <Label Text="{Binding Temperature.Max, StringFormat='{0}°'}"
+                       FontSize="18"
+                       HorizontalOptions="Center" />
+            </Border>
+        </Grid>
     </StackLayout>
 </ContentPage>

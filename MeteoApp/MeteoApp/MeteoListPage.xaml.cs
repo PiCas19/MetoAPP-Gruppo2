@@ -31,7 +31,16 @@ public partial class MeteoListPage : Shell
             {
                 var navigationParameter = new Dictionary<string, object>
                 {
-                    { "Location", selectedWeather.Location }
+                    { "Location", selectedWeather.Location },
+                    { "Weather", selectedWeather.Weather },
+                    { "Temperature", selectedWeather.Temperature },
+                    { "Wind", selectedWeather.Wind },
+                    { "Cloud", selectedWeather.Cloud },
+                    { "Rain", selectedWeather.Rain },
+                    { "Snow", selectedWeather.Snow },
+                    { "Sunrise", selectedWeather.Sunrise },
+                    { "Sunset", selectedWeather.Sunset },
+                    { "Timezone", selectedWeather.Timezone }
                 };
 
                 Shell.Current.GoToAsync("entrydetails", navigationParameter);
