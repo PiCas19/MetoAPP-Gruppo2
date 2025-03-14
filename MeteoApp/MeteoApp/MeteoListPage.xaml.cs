@@ -6,8 +6,8 @@ public partial class MeteoListPage : Shell
     public Dictionary<string, Type> Routes { get; private set; } = new Dictionary<string, Type>();
 
     public MeteoListPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         RegisterRoutes();
 
         BindingContext = new MeteoListViewModel();
@@ -21,12 +21,12 @@ public partial class MeteoListPage : Shell
             Routing.RegisterRoute(item.Key, item.Value);
     }
 
-    private void OnListItemSelected(object sender, SelectedItemChangedEventArgs e)
+    private void OnListItemSelected(object sender, SelectionChangedEventArgs e)
     {
-        if (e.SelectedItem != null)
+        if (e.CurrentSelection.Count > 0)
         {
-            WeatherData selectedWeather = e.SelectedItem as WeatherData;
-            
+            WeatherData selectedWeather = e.CurrentSelection[0] as WeatherData;
+
             if (selectedWeather != null)
             {
                 var navigationParameter = new Dictionary<string, object>
@@ -45,14 +45,13 @@ public partial class MeteoListPage : Shell
 
                 Shell.Current.GoToAsync("entrydetails", navigationParameter);
             }
-
-            ((ListView)sender).SelectedItem = null; // Deseleziona l'elemento dopo il click
+            ((CollectionView)sender).SelectedItem = null;
         }
     }
 
     private void OnItemAdded(object sender, EventArgs e)
     {
-         _ = ShowPrompt();
+        _ = ShowPrompt();
     }
 
     private async Task ShowPrompt()
