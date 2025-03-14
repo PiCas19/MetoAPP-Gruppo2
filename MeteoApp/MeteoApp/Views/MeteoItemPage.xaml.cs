@@ -27,7 +27,7 @@ public partial class MeteoItemPage : ContentPage
         {
             weather = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(WeatherIconUrl)); // Aggiorna anche l'icona
+            OnPropertyChanged(nameof(WeatherIconUrl));
         }
     }
 
