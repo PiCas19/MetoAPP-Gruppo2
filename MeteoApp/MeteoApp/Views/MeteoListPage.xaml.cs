@@ -29,7 +29,7 @@ public partial class MeteoListPage : Shell
         try
         {
             var weatherDataList = await _database.GetWeatherDataAsync();
-            Console.WriteLine($"Loaded {weatherDataList.Count} weather data items from database");
+            Console.WriteLine($"Loaded {weatherDataList.Count} weather data items from database!");
             
             if (BindingContext is MeteoListViewModel viewModel)
             {
