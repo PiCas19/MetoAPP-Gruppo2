@@ -28,19 +28,24 @@ public partial class App : Application
 
     public App()
     {
-        InitializeComponent();
+        InitializeComponent();    
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
         Task.Run(async () =>
         {
             try
             {
                 await InitializeDatabaseAsync();
-                Debug.WriteLine("Database inizializzato correttamente.");
+                Debug.WriteLine("Database ricaricato all'avvio dell'app.");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore nel database: {ex.Message}");
+                Debug.WriteLine($"Errore durante il caricamento del database all'avvio: {ex.Message}");
             }
-        }).Wait(); 
+        }).Wait();
     }
 
     protected override Window CreateWindow(IActivationState activationState)

@@ -71,6 +71,6 @@ public partial class MeteoListPage : Shell
 
     private async void OnItemAdded(object sender, EventArgs e)
     {
-        await DisplayAlert("Add City", "To Be Implemented", "OK");
+      await Navigation.PushAsync(new AddItemPage());
     }
 }

@@ -124,7 +124,6 @@ public partial class MeteoItemPage : ContentPage, INotifyPropertyChanged
             TemperatureLabel.Margin = new Thickness(0, 40, 0, 5);
             WeatherIcon.WidthRequest = 80;
             WeatherIcon.HeightRequest = 80;
-            Console.WriteLine("📱 Landscape Mode: FontSize 48, Icon 80px");
         }
         else
         {
@@ -132,7 +131,6 @@ public partial class MeteoItemPage : ContentPage, INotifyPropertyChanged
             TemperatureLabel.Margin = new Thickness(0, 10, 0, 10);
             WeatherIcon.WidthRequest = 100;
             WeatherIcon.HeightRequest = 100;
-            Console.WriteLine("📱 Portrait Mode: FontSize 64, Icon 100px");
         }
     }
     
