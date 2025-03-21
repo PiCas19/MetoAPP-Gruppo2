@@ -1,6 +1,7 @@
 ﻿namespace MeteoApp;
 using MeteoApp.Services;
 using System.Diagnostics;
+using Android.Webkit;
 
 public partial class App : Application
 {
