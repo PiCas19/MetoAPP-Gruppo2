@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MeteoApp.MeteoItemPage">
+
+    <ContentPage.Background>
+        <LinearGradientBrush>
+            <LinearGradientBrush.GradientStops>
+                <GradientStop Color="#304FFE" Offset="0.0"/>
+                <GradientStop Color="#00BCD4" Offset="1.0"/>
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <Grid Padding="20"
+          RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+        <!-- Nome città e descrizione -->
+        <StackLayout Grid.Row="0"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Start"
+                     Spacing="5">
+            <Label Text="{Binding LocationName}"
+                   FontSize="36"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalTextAlignment="Center"/>
+            
+            <Label Text="{Binding Description}"
+                   FontSize="20"
+                   FontAttributes="Italic"
+                   TextColor="White"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,5,0,5"/>
+        </StackLayout>
+
+        <!-- Icona meteo -->
+        <StackLayout Grid.Row="1"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Start"
+                     Spacing="10">
+            <Image x:Name="WeatherIcon"
+                   Source="{Binding WeatherIconUrl}" 
+                   WidthRequest="100"
+                   HeightRequest="100"
+                   HorizontalOptions="Center"/>
+        </StackLayout>
+
+        <!-- Temperatura attuale -->
+        <StackLayout Grid.Row="2"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center"
+                     Spacing="10">
+            <Label x:Name="TemperatureLabel"
+                   Text="{Binding TemperatureValue, StringFormat='{0}°C'}"
+                   FontSize="64"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalTextAlignment="Center"/>
+        </StackLayout>
+
+        <!-- Temperature Min e Max -->
+        <Grid Grid.Row="3"
+              VerticalOptions="End"
+              Padding="20"
+              ColumnDefinitions="*,*">
+            
+            <Border Stroke="LightBlue"
+                    StrokeThickness="2"
+                    BackgroundColor="Transparent"
+                    Padding="10"
+                    Grid.Column="0"
+                    Margin="5"
+                    WidthRequest="120">
+                <StackLayout>
+                    <Label Text="Min:"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="LightBlue"
+                           HorizontalTextAlignment="Center"/>
+                    <Label Text="{Binding MinTemperatureValue, StringFormat='{0}°C'}"
+                           FontSize="18"
+                           TextColor="LightBlue"
+                           HorizontalTextAlignment="Center"/>
+                </StackLayout>
+            </Border>
+
+            <Border Stroke="LightBlue"
+                    StrokeThickness="2"
+                    BackgroundColor="Transparent"
+                    Padding="10"
+                    Grid.Column="1"
+                    Margin="5"
+                    WidthRequest="120">
+                <StackLayout>
+                    <Label Text="Max:"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="LightBlue"
+                           HorizontalTextAlignment="Center"/>
+                    <Label Text="{Binding MaxTemperatureValue, StringFormat='{0}°C'}"
+                           FontSize="18"
+                           TextColor="LightBlue"
+                           HorizontalTextAlignment="Center"/>
+                </StackLayout>
+            </Border>
+        </Grid>
+
+    </Grid>
+</ContentPage>
