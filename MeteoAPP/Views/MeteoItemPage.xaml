@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MeteoAPP.MeteoItemPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="Transparent">
+
+    <ContentPage.Background>
+        <LinearGradientBrush EndPoint="0,1">
+            <GradientStop Color="#A1C4FD" Offset="0.0" /> 
+            <GradientStop Color="#C2E9FB" Offset="1.0" /> 
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <ContentPage.Resources>
+        <Style TargetType="Label" x:Key="WeatherTextStyle">
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontFamily" Value="OpenSansRegular" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Border" x:Key="TempMinBorderStyle">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Stroke" Value="Blue" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="StrokeShape">
+                <RoundRectangle CornerRadius="10" />
+            </Setter>
+            <Setter Property="Shadow">
+                <Shadow Brush="#40000000" Offset="2,2" Radius="5" Opacity="0.5" />
+            </Setter>
+        </Style>
+
+        <Style TargetType="Border" x:Key="TempMaxBorderStyle">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Stroke" Value="Red" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="StrokeShape">
+                <RoundRectangle CornerRadius="10" />
+            </Setter>
+            <Setter Property="Shadow">
+                <Shadow Brush="#40000000" Offset="2,2" Radius="5" Opacity="0.5" />
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> 
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />   
+            <RowDefinition Height="Auto" /> 
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label x:Name="CityNameLabel"
+               Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"
+               Text="London, UK"
+               FontSize="28"
+               FontAttributes="Bold"
+               Style="{StaticResource WeatherTextStyle}" />
+        <StackLayout Grid.Row="1"
+                     Grid.Column="0"
+                     Grid.ColumnSpan="2"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center"
+                     Spacing="5">
+            <Image x:Name="WeatherIcon"
+                   WidthRequest="80"
+                   HeightRequest="80"
+                   HorizontalOptions="Center" />
+            <Label x:Name="WeatherLabel"
+                   Text="light intensity drizzle"
+                   FontSize="18"
+                   Style="{StaticResource WeatherTextStyle}" />
+        </StackLayout>
+        <Label x:Name="TemperatureLabel"
+               Grid.Row="2"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"
+               Text="7°"
+               FontSize="64"
+               FontAttributes="Bold"
+               Style="{StaticResource WeatherTextStyle}"
+               VerticalOptions="Center"
+               HorizontalOptions="Center" />
+        <StackLayout Grid.Row="3"
+                     Grid.Column="0"
+                     Grid.ColumnSpan="2"
+                     Orientation="Horizontal"
+                     HorizontalOptions="Center"
+                     Spacing="20">
+            <Border Style="{StaticResource TempMinBorderStyle}">
+                <Label x:Name="TemperatureMinLabel"
+                       Text="-2°"
+                       FontSize="16"
+                       TextColor="Blue" />
+            </Border>
+            <Border Style="{StaticResource TempMaxBorderStyle}">
+                <Label x:Name="TemperatureMaxLabel"
+                       Text="11°"
+                       FontSize="16"
+                       TextColor="Red" />
+            </Border>
+        </StackLayout>
+    </Grid>
+</ContentPage>

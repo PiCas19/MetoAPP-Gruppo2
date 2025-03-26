@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MeteoApp.AddItemPage">
+
+    <Grid>
+        <ActivityIndicator x:Name="LoadingIndicator"
+                           IsVisible="False"
+                           IsRunning="False"
+                           Color="Blue"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+        <VerticalStackLayout Spacing="10" Padding="20">
+           <Entry x:Name="CitySearchEntry" 
+                Placeholder="Cerca una città..." 
+                TextChanged="OnCitySearchTextChanged" />
+
+            <WebView x:Name="MapWebView"
+                     HeightRequest="400"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand"
+                     Navigating="WebView_Navigating" />
+
+            <Label x:Name="CityLabel"
+                   Text="Select a location on the map"
+                   FontSize="20"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+            <Button Text="Save Location"
+                    HorizontalOptions="Center"
+                    VerticalOptions="End"
+                    Clicked="OnSaveButtonClicked" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
