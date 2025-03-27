@@ -1,35 +1,36 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MeteoApp.AddItemPage">
-
+xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+x:Class="MeteoApp.AddItemPage"
+Title="Add Location">
     <Grid>
         <ActivityIndicator x:Name="LoadingIndicator"
-                           IsVisible="False"
-                           IsRunning="False"
-                           Color="Blue"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"/>
+            IsVisible="False"
+            IsRunning="False"
+            Color="Blue"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"/>
         <VerticalStackLayout Spacing="10" Padding="20">
-           <Entry x:Name="CitySearchEntry" 
-                Placeholder="Cerca una città..." 
-                TextChanged="OnCitySearchTextChanged" />
-
+            <HorizontalStackLayout Spacing="10">
+                <Entry x:Name="CitySearchEntry"
+                    Placeholder="Search for a city..." />
+                <Button x:Name="SearchButton" 
+                    Text="Cerca" 
+                    Clicked="OnSearchButtonClicked"
+                    HorizontalOptions="End" />
+            </HorizontalStackLayout>
             <WebView x:Name="MapWebView"
-                     HeightRequest="400"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand"
-                     Navigating="WebView_Navigating" />
-
+                HeightRequest="400"
+                Navigating="WebView_Navigating" />
             <Label x:Name="CityLabel"
-                   Text="Select a location on the map"
-                   FontSize="20"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"/>
+                Text="Select a location on the map"
+                FontSize="20"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
             <Button Text="Save Location"
-                    HorizontalOptions="Center"
-                    VerticalOptions="End"
-                    Clicked="OnSaveButtonClicked" />
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Clicked="OnSaveButtonClicked" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

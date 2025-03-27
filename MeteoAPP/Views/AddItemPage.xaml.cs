@@ -1,49 +1,31 @@
-namespace MeteoApp;
-
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Devices.Sensors;
-using Microsoft.Maui.ApplicationModel;
 using MeteoAPP.Models;
 using MeteoAPP.ViewModels;
 
-public partial class AddItemPage : ContentPage, INotifyPropertyChanged
+namespace MeteoApp;
+
+[QueryProperty("ViewModel", "ViewModel")]
+public partial class AddItemPage : ContentPage
 {
-    private string locationName = string.Empty;  
-    private double latitude;
-    private double longitude;
+    private readonly MeteoListViewModel _meteoListViewModel;
+    private readonly AddItemViewModel _addItemViewModel;
 
-    private readonly MeteoListViewModel _viewModel;
-
-    public string LocationName
-    {
-        get => locationName;
-        set
-        {
-            locationName = value;
-            OnPropertyChanged();
-        }
-    }
-
-
-
-    public AddItemPage()
+    public AddItemPage(MeteoListViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = this;
+        _meteoListViewModel = viewModel;
+        _addItemViewModel = new AddItemViewModel();
+        BindingContext = _addItemViewModel;
+
         #if ANDROID
-            MapWebView.Source = "file:///android_asset/map.html"; 
+                MapWebView.Source = "file:///android_asset/map.html";
         #else
-            MapWebView.Source = "map.html"; 
+                MapWebView.Source = "map.html";
         #endif
 
         MapWebView.Navigating += WebView_Navigating!;
-        
+        MapWebView.Navigated += OnWebViewNavigated!;
+
         _ = RequestLocationPermissionAndGetLocation();
     }
 
@@ -85,16 +67,15 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
             var location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Best));
             if (location != null)
             {
-                latitude = location.Latitude;
-                longitude = location.Longitude;
+                _addItemViewModel.Latitude = location.Latitude;
+                _addItemViewModel.Longitude = location.Longitude;
 
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    string locationName = await GetLocationNameAsync(latitude, longitude);
-                    LocationName = locationName;
-                    CityLabel.Text = locationName;
-                    CitySearchEntry.Text = locationName;  // Aggiorna l'Entry con il nome della città
-                    string js = $"updateLocation({latitude}, {longitude});";
+                    string city = await _addItemViewModel.GetLocationNameAsync(location.Latitude, location.Longitude);
+                    CityLabel.Text = $"{_addItemViewModel.CityName}, {_addItemViewModel.CountryName}";
+                    CitySearchEntry.Text = _addItemViewModel.CityName;
+                    string js = $"updateLocation({location.Latitude}, {location.Longitude});";
                     await MapWebView.EvaluateJavaScriptAsync(js);
                 });
             }
@@ -119,19 +100,17 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
             try
             {
                 var coordinates = JsonSerializer.Deserialize<Dictionary<string, double>>(data);
-
-                if (coordinates != null && coordinates.ContainsKey("lat") && coordinates.ContainsKey("lng"))
+                if (coordinates?.ContainsKey("lat") == true && coordinates.ContainsKey("lng"))
                 {
-                    latitude = coordinates["lat"];
-                    longitude = coordinates["lng"];
-                    
-                    string locationName = await GetLocationNameAsync(latitude, longitude);
+                    _addItemViewModel.Latitude = coordinates["lat"];
+                    _addItemViewModel.Longitude = coordinates["lng"];
+
+                    string city = await _addItemViewModel.GetLocationNameAsync(_addItemViewModel.Latitude, _addItemViewModel.Longitude);
 
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
-                        LocationName = locationName;
-                        CityLabel.Text = locationName;
-                        CitySearchEntry.Text = locationName;  // Aggiorna anche l'Entry con la città selezionata
+                        CityLabel.Text = $"{_addItemViewModel.CityName}, {_addItemViewModel.CountryName}";
+                        CitySearchEntry.Text = _addItemViewModel.CityName;
                     });
                 }
             }
@@ -142,53 +121,60 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    private async Task<string> GetLocationNameAsync(double latitude, double longitude)
+    private async void OnSearchButtonClicked(object sender, EventArgs e)
     {
-        string url = $"https://nominatim.openstreetmap.org/reverse?format=json&lat={latitude}&lon={longitude}";
+        string searchText = CitySearchEntry.Text;
+
+        if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 3)
+        {
+            await DisplayAlert("Errore", "Inserisci un nome di città valido (minimo 3 caratteri).", "OK");
+            return;
+        }
 
         try
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "MeteoApp/1.0");
-            var response = await client.GetAsync(url);
+            LoadingIndicator.IsVisible = true;
+            LoadingIndicator.IsRunning = true;
 
-            if (response.IsSuccessStatusCode)
+            var location = await _addItemViewModel.GetCoordinatesFromCityAsync(searchText);
+            if (location != null)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<JsonElement>(json);
+                CityLabel.Text = $"{_addItemViewModel.CityName}, {_addItemViewModel.CountryName}";
+                CitySearchEntry.Text = _addItemViewModel.CityName;
 
-                if (data.TryGetProperty("address", out JsonElement address))
-                {
-                    string city = address.TryGetProperty("city", out JsonElement cityElement) ? cityElement.GetString() :
-                                address.TryGetProperty("town", out JsonElement townElement) ? townElement.GetString() :
-                                address.TryGetProperty("village", out JsonElement villageElement) ? villageElement.GetString() : 
-                                address.TryGetProperty("county", out JsonElement countyElement) ? countyElement.GetString() : "Sconosciuto";
-
-                    string country = address.TryGetProperty("country", out JsonElement countryElement) ? countryElement.GetString() : "Sconosciuto";
-
-                    return $"{city}, {country}";
-                }
+                string js = $"updateLocation({_addItemViewModel.Latitude}, {_addItemViewModel.Longitude});";
+                Console.WriteLine($"Eseguo: {js}");
+                var jsResult = await MapWebView.EvaluateJavaScriptAsync(js);
+                Console.WriteLine($"Risultato JS: {jsResult}");
+            }
+            else
+            {
+                await DisplayAlert("Errore", "Città non trovata.", "OK");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Errore durante il recupero della posizione: {ex.Message}");
+            Console.WriteLine($"Errore in OnSearchButtonClicked: {ex.Message}");
+            await DisplayAlert("Errore", $"Si è verificato un problema: {ex.Message}", "OK");
         }
-
-        return "Posizione non trovata";
+        finally
+        {
+            LoadingIndicator.IsVisible = false;
+            LoadingIndicator.IsRunning = false;
+        }
     }
 
     private async void OnSaveButtonClicked(object sender, EventArgs e)
     {
-        // Salva la città
         var city = new City
         {
-            Name = LocationName,
-            Latitude = latitude,
-            Longitude = longitude
+            Name = _addItemViewModel.CityName,
+            Latitude = _addItemViewModel.Latitude,
+            Longitude = _addItemViewModel.Longitude,
+            Country = _addItemViewModel.CountryName
         };
 
-        await _viewModel.AddCityAsync(city); 
+        await _meteoListViewModel.AddCityAsync(city);
         await DisplayAlert("Successo", "La città è stata aggiunta.", "OK");
         await Navigation.PopAsync();
     }
@@ -198,76 +184,11 @@ public partial class AddItemPage : ContentPage, INotifyPropertyChanged
         if (e.Result != WebNavigationResult.Success)
         {
             Console.WriteLine($"Errore di navigazione WebView: {e.Result}");
-            DisplayAlert("Errore", "Impossibile caricare la mappa.", "OK");
+            _ = DisplayAlert("Errore", "Impossibile caricare la mappa.", "OK");
         }
         else
         {
             Console.WriteLine("WebView caricata con successo.");
         }
-    }
-
-    private async void OnCitySearchTextChanged(object sender, TextChangedEventArgs e)
-    {
-        // Prendi il nuovo testo dalla Entry
-        string searchText = e.NewTextValue;
-
-        if (!string.IsNullOrWhiteSpace(searchText))
-        {
-            var location = await GetCoordinatesFromCityAsync(searchText);
-
-            if (location != null)
-            {
-                latitude = location.Latitude;
-                longitude = location.Longitude;
-
-                CityLabel.Text = location.Name;
-                CitySearchEntry.Text = location.Name;
-
-                string js = $"updateLocation({latitude}, {longitude});";
-                await MapWebView.EvaluateJavaScriptAsync(js);
-            }
-            else
-            {
-                await DisplayAlert("Errore", "Città non trovata.", "OK");
-            }
-        }
-    }
-
-    private async Task<GeoLocation> GetCoordinatesFromCityAsync(string city)
-    {
-        string url = $"https://nominatim.openstreetmap.org/search?format=json&q={city}";
-
-        try
-        {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "MeteoApp/1.0");
-            var response = await client.GetAsync(url);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<List<JsonElement>>(json);
-
-                if (data.Count > 0)
-                {
-                    var firstResult = data[0];
-                    var lat = firstResult.GetProperty("lat").GetDouble();
-                    var lon = firstResult.GetProperty("lon").GetDouble();
-
-                    return new GeoLocation
-                    {
-                        Name = city,
-                        Latitude = lat,
-                        Longitude = lon
-                    };
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Errore durante la ricerca della città: {ex.Message}");
-        }
-
-        return null;
     }
 }
