@@ -4,30 +4,61 @@
              x:Class="MeteoAPP.MainPage"
              BackgroundColor="White"
              Padding="20,50,20,20">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-    <VerticalStackLayout Spacing="20" HorizontalOptions="Center">
-        <Label x:Name="AppTitle"
-               Text="MeteoApp"
-               FontSize="36"
-               FontAttributes="Bold"
-               HorizontalOptions="Center"
-               TextColor="Black" />
+        <Label 
+            Grid.Row="0"
+            x:Name="AppTitle"
+            Text="MeteoApp"
+            FontSize="36"
+            FontAttributes="Bold"
+            HorizontalOptions="Center"
+            TextColor="Black" />
 
-        <Label x:Name="AppDescription"
-               Text="MeteoApp ti consente di ottenere informazioni meteo accurate per qualsiasi città in tempo reale."
-               FontSize="18"
-               HorizontalOptions="Center"
-               TextColor="Gray"
-               Padding="10,0" />
+        <VerticalStackLayout 
+            Grid.Row="1"
+            Spacing="20"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+            
+            <Border 
+                Stroke="#E0E0E0"
+                StrokeThickness="2"
+                BackgroundColor="White"
+                Padding="20"
+                StrokeShape="RoundRectangle 20">
+                <Image 
+                    Source="app_logo.png"
+                    HeightRequest="250"
+                    WidthRequest="250"
+                    Aspect="AspectFit"/>
+            </Border>
 
-        <Button Text="Inizia"
-                BackgroundColor="#4CAF50"
-                TextColor="White"
-                Padding="10, 15"
+            <Label 
+                x:Name="AppDescription"
+                Text="Scopri il meteo in tempo reale. Ovunque, Sempre."
                 FontSize="18"
                 HorizontalOptions="Center"
-                Clicked="OnStartClicked" />
+                TextColor="Gray"
+                HorizontalTextAlignment="Center"
+                Padding="10,0" />
+        </VerticalStackLayout>
 
-    </VerticalStackLayout>
-
+        <Button 
+            Grid.Row="2"
+            Text="Inizia la tua Avventura Meteo"
+            BackgroundColor="#4CAF50"
+            TextColor="White"
+            Padding="15, 20"
+            FontSize="18"
+            CornerRadius="10"
+            HorizontalOptions="Fill"
+            Margin="20,0"
+            Clicked="OnStartClicked" />
+    </Grid>
 </ContentPage>

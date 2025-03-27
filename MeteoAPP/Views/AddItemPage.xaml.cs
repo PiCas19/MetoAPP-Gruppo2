@@ -156,7 +156,6 @@ public partial class AddItemPage : ContentPage
         };
 
         await _meteoListViewModel.AddCityAsync(city);
-        await DisplayAlert("Successo", "La città è stata aggiunta.", "OK");
         await Navigation.PopAsync();
     }
 

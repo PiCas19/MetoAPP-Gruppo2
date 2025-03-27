@@ -1,15 +1,24 @@
-﻿namespace MeteoAPP;
+﻿using MeteoApp;
 
-public partial class MainPage : ContentPage
+namespace MeteoAPP
 {
-	public MainPage()
-	{
-		InitializeComponent();
-	}
+    public partial class MainPage : ContentPage
+    {
+        public MainPage()
+        {
+            InitializeComponent();
+        }
 
-	private async void OnStartClicked(object sender, EventArgs e)
-	{
-		await Navigation.PushAsync(new ListMeteoPage()); 
-	}
+        private async void OnStartClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                await Shell.Current.GoToAsync("//ListMeteoPage");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Errore", $"Impossibile procedere: {ex.Message}", "OK");
+            }
+        }
+    }
 }
-

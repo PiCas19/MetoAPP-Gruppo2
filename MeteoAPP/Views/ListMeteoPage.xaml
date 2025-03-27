@@ -57,7 +57,11 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:City">
                         <ViewCell>
-                            <Grid Padding="10" ColumnSpacing="5">
+                            <Grid Padding="10" ColumnSpacing="5" 
+                                BackgroundColor="{OnPlatform 
+                                    iOS='#F2F2F2', 
+                                    Android='#F2F2F2', 
+                                    WinUI='#F2F2F2'}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />    
                                     <ColumnDefinition Width="Auto" /> 

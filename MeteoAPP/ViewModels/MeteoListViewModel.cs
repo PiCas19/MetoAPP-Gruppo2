@@ -166,12 +166,27 @@ namespace MeteoAPP.ViewModels
         {
             try
             {
+                if (Cities.Any(c => c.Name == city.Name && c.Country == city.Country))
+                {
+                    await Application.Current!.Windows[0].Page!.DisplayAlert(
+                        "Avviso", 
+                        "Questa città è già presente nell'elenco.", 
+                        "OK");
+                    return;
+                }
+
                 await _databaseService.AddCityAsync(city);
-                Cities.Add(city);
+                await LoadCitiesAsync();
+
+                Debug.WriteLine($"Città {city.Name} aggiunta con successo.");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Errore durante l'aggiunta della città: {ex.Message}");
+                await Application.Current!.Windows[0].Page!.DisplayAlert(
+                    "Errore", 
+                    $"Impossibile aggiungere la città: {ex.Message}", 
+                    "OK");
             }
         }
 
