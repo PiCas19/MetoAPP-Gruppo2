@@ -1,5 +1,5 @@
 using Newtonsoft.Json;
-using System.Globalization;
+using DotNetEnv;
 using MeteoAPP.Models;
 
 namespace MeteoAPP.Services
@@ -7,18 +7,20 @@ namespace MeteoAPP.Services
     public class OpenWeatherService
     {
         private readonly HttpClient _httpClient;
-        private const string API_KEY = "e67488d5bc369d848639ee03d0b0e5ac";
+        private readonly string _apiKey;
 
         public OpenWeatherService()
         {
+             Env.Load();
             _httpClient = new HttpClient();
+            _apiKey = Env.GetString("OPENWEATHERMAP_API_KEY");
         }
 
         public async Task<WeatherData?> GetWeatherByCoordinatesAsync(double latitude, double longitude)
         {
             try
             {
-                var url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={API_KEY}&units=metric";
+                var url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={_apiKey}&units=metric";
                 
                 var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
