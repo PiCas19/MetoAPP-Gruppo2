@@ -17,6 +17,7 @@ namespace MeteoAPP
             InitializeComponent();
             _locationService = new GeoLocationService();
             _weatherService = new OpenWeatherService();
+            _ = _weatherService.InitializeAsync();
             _viewModel = new MeteoListViewModel(_locationService, _weatherService);
             BindingContext = _viewModel;
             Loaded += async (s, e) => await LoadDataAsync();

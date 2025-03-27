@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using DotNetEnv;
 using MeteoAPP.Models;
 
 namespace MeteoAPP.Services
@@ -7,15 +6,68 @@ namespace MeteoAPP.Services
     public class OpenWeatherService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
+        private string _apiKey;
 
         public OpenWeatherService()
         {
-             Env.Load();
             _httpClient = new HttpClient();
-            _apiKey = Env.GetString("OPENWEATHERMAP_API_KEY");
+            _apiKey = string.Empty;
         }
 
+        public async Task InitializeAsync()
+        {
+            _apiKey = await LoadApiKeyFromConfigAsync();
+            if (string.IsNullOrEmpty(_apiKey))
+            {
+                throw new InvalidOperationException("La chiave API non è stata trovata nel file di configurazione.");
+            }
+        }
+
+        private async Task<string> LoadApiKeyFromConfigAsync()
+        {
+            try
+            {
+                var assembly = GetType().Assembly;
+                var resourceName = assembly.GetManifestResourceNames()
+                    .FirstOrDefault(rn => rn.EndsWith("config.json"));
+
+                if (resourceName != null)
+                {
+                    using var stream = assembly.GetManifestResourceStream(resourceName);
+                    if (stream != null)
+                    {
+                        using var reader = new StreamReader(stream);
+                        var jsonContent = await reader.ReadToEndAsync();
+                        var config = JsonConvert.DeserializeObject<Config>(jsonContent);
+                        return config?.OpenWeatherApiKey ?? string.Empty;
+                    }
+                }
+                var configFilePath = Path.Combine(FileSystem.AppDataDirectory, "config.json");
+                
+                var directory = Path.GetDirectoryName(configFilePath);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                if (!File.Exists(configFilePath))
+                {
+                    await File.WriteAllTextAsync(configFilePath, JsonConvert.SerializeObject(new Config()));
+                }
+
+                var fileContent = await File.ReadAllTextAsync(configFilePath);
+                var fileConfig = JsonConvert.DeserializeObject<Config>(fileContent);
+                
+                return fileConfig?.OpenWeatherApiKey ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore nel caricamento della chiave API: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                return string.Empty;
+            }
+        }
+        
         public async Task<WeatherData?> GetWeatherByCoordinatesAsync(double latitude, double longitude)
         {
             try
