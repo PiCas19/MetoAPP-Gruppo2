@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:MeteoAPP.ViewModels"
+             x:Class="MeteoAPP.NotificationSettingsPage"
+             x:DataType="viewModels:NotificationSettingsViewModel"
+             Title="Notification Settings"
+             BackgroundColor="White">
+
+    <Grid Padding="20" RowSpacing="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label 
+            Grid.Row="0"
+            Text="Temperature Notification Settings"
+            FontSize="Large"
+            FontAttributes="Bold"
+            HorizontalOptions="Center"/>
+
+        <Switch 
+            Grid.Row="1"
+            x:Name="NotificationSwitch"
+            IsToggled="{Binding IsNotificationEnabled}"
+            HorizontalOptions="Center">
+            <Switch.Triggers>
+                <DataTrigger TargetType="Switch"
+                             Binding="{Binding IsNotificationEnabled}"
+                             Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </DataTrigger>
+            </Switch.Triggers>
+        </Switch>
+
+        <StackLayout Grid.Row="2" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+            <Label 
+                Text="High Temperature Threshold:"
+                VerticalOptions="Center"
+                FontSize="Medium"/>
+            <Entry 
+                x:Name="HighTempThresholdEntry"
+                Keyboard="Numeric"
+                Placeholder="Enter high temp"
+                WidthRequest="100"
+                Text="{Binding HighTemperatureThreshold}"
+                IsEnabled="{Binding IsNotificationEnabled}"/>
+            <Label 
+                Text="°C"
+                VerticalOptions="Center"
+                FontSize="Medium"/>
+        </StackLayout>
+
+        <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+            <Label 
+                Text="Low Temperature Threshold:"
+                VerticalOptions="Center"
+                FontSize="Medium"/>
+            <Entry 
+                x:Name="LowTempThresholdEntry"
+                Keyboard="Numeric"
+                Placeholder="Enter low temp"
+                WidthRequest="100"
+                Text="{Binding LowTemperatureThreshold}"
+                IsEnabled="{Binding IsNotificationEnabled}"/>
+            <Label 
+                Text="°C"
+                VerticalOptions="Center"
+                FontSize="Medium"/>
+        </StackLayout>
+
+        <StackLayout Grid.Row="4" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="End" Spacing="20">
+            <Button 
+                Text="Save" 
+                Clicked="OnSaveClicked"
+                BackgroundColor="Green"
+                TextColor="White"
+                WidthRequest="100"/>
+            <Button 
+                Text="Cancel" 
+                Clicked="OnCancelClicked"
+                BackgroundColor="Red"
+                TextColor="White"
+                WidthRequest="100"/>
+        </StackLayout>
+    </Grid>
+</ContentPage>
