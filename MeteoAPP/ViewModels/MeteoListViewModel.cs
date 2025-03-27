@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using MeteoAPP.Models;
@@ -206,7 +205,6 @@ namespace MeteoAPP.ViewModels
 
                 if (locationResult.Success)
                 {
-                    _ = _weatherService.InitializeAsync();
                     var weather = await _weatherService.GetWeatherByCoordinatesAsync(
                         locationResult.Latitude,
                         locationResult.Longitude);
