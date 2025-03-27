@@ -10,12 +10,14 @@ namespace MeteoAPP
     {
         private readonly MeteoListViewModel _viewModel;
         private readonly OpenWeatherService _weatherService;
+        private readonly GeoLocationService _locationService;
 
         public ListMeteoPage()
         {
             InitializeComponent();
+            _locationService = new GeoLocationService();
             _weatherService = new OpenWeatherService();
-            _viewModel = new MeteoListViewModel();
+            _viewModel = new MeteoListViewModel(_locationService, _weatherService);
             BindingContext = _viewModel;
             Loaded += async (s, e) => await LoadDataAsync();
         }
@@ -25,10 +27,10 @@ namespace MeteoAPP
             try
             {
                 Debug.WriteLine("Pagina: Inizio caricamento città");
-                
                 await _viewModel.LoadCitiesAsync();
-                
                 Debug.WriteLine($"Pagina: Numero di città: {_viewModel.Cities.Count}");
+                
+                await _viewModel.LoadCurrentLocationAsync();
                 
                 if (_viewModel.Cities.Count == 0)
                 {
@@ -46,7 +48,7 @@ namespace MeteoAPP
         {
             try
             {
-                var addItemPage = new AddItemPage(_viewModel);
+                var addItemPage = new AddItemPage(_viewModel, _locationService);
                 await Navigation.PushAsync(addItemPage);
             }
             catch (Exception ex)
@@ -89,6 +91,77 @@ namespace MeteoAPP
                     Debug.WriteLine($"Errore durante la navigazione: {ex.Message}");
                     await DisplayAlert("Errore", $"Errore durante la navigazione: {ex.Message}", "OK");
                 }
+            }
+        }
+
+        private async void OnDeleteItemInvoked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is City city)
+            {
+                bool confirm = await DisplayAlert("Conferma", $"Vuoi eliminare {city.Name}?", "Sì", "No");
+                if (confirm)
+                {
+                    try
+                    {
+                        await _viewModel.RemoveCityAsync(city);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Errore durante l'eliminazione della città: {ex.Message}");
+                        await DisplayAlert("Errore", $"Errore durante l'eliminazione: {ex.Message}", "OK");
+                    }
+                }
+            }
+        }
+
+        private async void OnCurrentLocationTapped(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadingIndicator.IsVisible = true;
+                LoadingIndicator.IsRunning = true;
+
+                var locationResult = await _locationService.GetCurrentLocationAsync();
+
+                if (locationResult.Success)
+                {
+                    var weather = await _weatherService.GetWeatherByCoordinatesAsync(
+                        locationResult.Latitude, 
+                        locationResult.Longitude
+                    );
+
+                    if (weather == null)
+                    {
+                        await DisplayAlert("Errore", "Impossibile caricare i dati meteo", "OK");
+                        return;
+                    }
+
+                    var navigationParameter = new Dictionary<string, object>
+                    {
+                        { "CityName", _viewModel.CurrentCityName },
+                        { "Temperature", weather.Temperature.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) },
+                        { "TemperatureMin", weather.TemperatureMin.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) },
+                        { "TemperatureMax", weather.TemperatureMax.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) },
+                        { "Description", weather.Description ?? "N/A" },
+                        { "Icon", weather.IconCode ?? "01d" }
+                    };
+
+                    await Shell.Current.GoToAsync("MeteoItemPage", navigationParameter);
+                }
+                else
+                {
+                    await DisplayAlert("Errore", locationResult.ErrorMessage, "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Errore durante il recupero della posizione corrente: {ex.Message}");
+                await DisplayAlert("Errore", $"Errore durante il recupero della posizione: {ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingIndicator.IsVisible = false;
+                LoadingIndicator.IsRunning = false;
             }
         }
     }

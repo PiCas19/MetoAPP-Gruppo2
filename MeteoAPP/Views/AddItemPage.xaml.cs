@@ -1,20 +1,24 @@
 using System.Text.Json;
 using MeteoAPP.Models;
 using MeteoAPP.ViewModels;
+using MeteoAPP.Services;
 
 namespace MeteoApp;
 
 [QueryProperty("ViewModel", "ViewModel")]
+[QueryProperty ("GeoLocationService", "GeoLocationService")]
 public partial class AddItemPage : ContentPage
 {
     private readonly MeteoListViewModel _meteoListViewModel;
     private readonly AddItemViewModel _addItemViewModel;
+    private readonly GeoLocationService _locationService;
 
-    public AddItemPage(MeteoListViewModel viewModel)
+    public AddItemPage(MeteoListViewModel viewModel, GeoLocationService geoLocationService )
     {
         InitializeComponent();
         _meteoListViewModel = viewModel;
         _addItemViewModel = new AddItemViewModel();
+        _locationService = geoLocationService;
         BindingContext = _addItemViewModel;
 
         #if ANDROID
@@ -36,18 +40,26 @@ public partial class AddItemPage : ContentPage
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
 
-            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
-            if (status != PermissionStatus.Granted)
+            var locationResult = await _locationService.GetCurrentLocationAsync();
+            
+            if (locationResult.Success)
             {
-                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-                if (status != PermissionStatus.Granted)
-                {
-                    await DisplayAlert("Permesso negato", "L'accesso alla posizione è necessario per mostrare la tua posizione.", "OK");
-                    return;
-                }
-            }
+                _addItemViewModel.Latitude = locationResult.Latitude;
+                _addItemViewModel.Longitude = locationResult.Longitude;
 
-            await GetCurrentLocation();
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    string city = await _addItemViewModel.GetLocationNameAsync(locationResult.Latitude, locationResult.Longitude);
+                    CityLabel.Text = $"{_addItemViewModel.CityName}, {_addItemViewModel.CountryName}";
+                    CitySearchEntry.Text = _addItemViewModel.CityName;
+                    string js = $"updateLocation({locationResult.Latitude}, {locationResult.Longitude});";
+                    await MapWebView.EvaluateJavaScriptAsync(js);
+                });
+            }
+            else
+            {
+                await DisplayAlert("Errore", locationResult.ErrorMessage, "OK");
+            }
         }
         catch (Exception ex)
         {
@@ -60,36 +72,7 @@ public partial class AddItemPage : ContentPage
         }
     }
 
-    private async Task GetCurrentLocation()
-    {
-        try
-        {
-            var location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Best));
-            if (location != null)
-            {
-                _addItemViewModel.Latitude = location.Latitude;
-                _addItemViewModel.Longitude = location.Longitude;
-
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    string city = await _addItemViewModel.GetLocationNameAsync(location.Latitude, location.Longitude);
-                    CityLabel.Text = $"{_addItemViewModel.CityName}, {_addItemViewModel.CountryName}";
-                    CitySearchEntry.Text = _addItemViewModel.CityName;
-                    string js = $"updateLocation({location.Latitude}, {location.Longitude});";
-                    await MapWebView.EvaluateJavaScriptAsync(js);
-                });
-            }
-            else
-            {
-                await DisplayAlert("Errore", "Impossibile ottenere la posizione.", "OK");
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Errore", $"Impossibile ottenere la posizione: {ex.Message}", "OK");
-        }
-    }
-
+    // Remaining methods stay the same as in the previous implementation
     private async void WebView_Navigating(object sender, WebNavigatingEventArgs e)
     {
         if (e.Url.StartsWith("js://update-location/"))
