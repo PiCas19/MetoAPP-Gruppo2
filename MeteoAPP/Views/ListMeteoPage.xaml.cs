@@ -115,6 +115,24 @@ namespace MeteoAPP
             }
         }
 
+         private async void OnSettingsButtonClicked(object sender, EventArgs e)
+         {
+            if (sender is Button button && button.CommandParameter is City city)
+            {
+                try
+                {
+                    var settingsViewModel = new NotificationSettingsViewModel(city);
+                    var settingsPage = new NotificationSettingsPage(settingsViewModel);
+                    await Navigation.PushModalAsync(settingsPage);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Errore durante l'apertura delle impostazioni: {ex.Message}");
+                    await DisplayAlert("Errore", $"Impossibile aprire le impostazioni: {ex.Message}", "OK");
+                }
+            }
+         }
+
         private async void OnCurrentLocationTapped(object sender, EventArgs e)
         {
             try
