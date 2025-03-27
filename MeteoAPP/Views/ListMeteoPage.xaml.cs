@@ -32,7 +32,7 @@ namespace MeteoAPP
                 
                 await _viewModel.LoadCurrentLocationAsync();
                 
-                if (_viewModel.Cities.Count == 0)
+                if (_viewModel.FilteredCities.Count == 0 && _viewModel.Cities.Count == 0)
                 {
                     await DisplayAlert("Attenzione", "Nessuna città disponibile", "OK");
                 }

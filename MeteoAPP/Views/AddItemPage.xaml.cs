@@ -71,8 +71,6 @@ public partial class AddItemPage : ContentPage
             LoadingIndicator.IsRunning = false;
         }
     }
-
-    // Remaining methods stay the same as in the previous implementation
     private async void WebView_Navigating(object sender, WebNavigatingEventArgs e)
     {
         if (e.Url.StartsWith("js://update-location/"))

@@ -116,18 +116,18 @@ namespace MeteoAPP
             LinearGradientBrush backgroundBrush = new LinearGradientBrush { EndPoint = new Point(0, 1) };
             if (_description.ToLower().Contains("clear"))
             {
-                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#FFD700"), Offset = 0.0f }); // Giallo chiaro
-                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#C2E9FB"), Offset = 1.0f }); // Celeste chiaro
+                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#FFD700"), Offset = 0.0f }); 
+                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#C2E9FB"), Offset = 1.0f }); 
             }
             else if (_description.ToLower().Contains("cloud"))
             {
-                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#B0C4DE"), Offset = 0.0f }); // Grigio chiaro
-                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#C2E9FB"), Offset = 1.0f }); // Celeste chiaro
+                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#B0C4DE"), Offset = 0.0f });
+                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#C2E9FB"), Offset = 1.0f }); 
             }
             else if (_description.ToLower().Contains("rain") || _description.ToLower().Contains("drizzle"))
             {
-                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#A1C4FD"), Offset = 0.0f }); // Blu chiaro
-                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#C2E9FB"), Offset = 1.0f }); // Celeste chiaro
+                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#A1C4FD"), Offset = 0.0f }); 
+                backgroundBrush.GradientStops.Add(new GradientStop { Color = Color.FromArgb("#C2E9FB"), Offset = 1.0f }); 
             }
             else
             {

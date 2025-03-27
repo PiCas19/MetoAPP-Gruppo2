@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using MeteoAPP.Models;
@@ -12,8 +13,10 @@ namespace MeteoAPP.ViewModels
         private readonly GeoLocationService _locationService;
         private readonly OpenWeatherService _weatherService;
         private ObservableCollection<City> _cities;
+        private ObservableCollection<City> _filteredCities;
         private bool _isLoading;
         private string? _currentCityName;
+        private string _searchText;
 
         public ObservableCollection<City> Cities
         {
@@ -21,6 +24,17 @@ namespace MeteoAPP.ViewModels
             set
             {
                 _cities = value;
+                OnPropertyChanged();
+                UpdateFilteredCities(); // Aggiorna la lista filtrata quando cambia Cities
+            }
+        }
+
+        public ObservableCollection<City> FilteredCities
+        {
+            get => _filteredCities;
+            set
+            {
+                _filteredCities = value;
                 OnPropertyChanged();
             }
         }
@@ -45,6 +59,17 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                UpdateFilteredCities(); // Aggiorna la lista filtrata quando cambia il testo di ricerca
+            }
+        }
+
         public ICommand DeleteCityCommand { get; }
         public ICommand RefreshCommand { get; }
 
@@ -54,10 +79,27 @@ namespace MeteoAPP.ViewModels
             _weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
             _databaseService = App.DatabaseService ?? throw new ArgumentNullException(nameof(App.DatabaseService));
             _cities = new ObservableCollection<City>();
+            _filteredCities = new ObservableCollection<City>();
             _currentCityName = "Caricamento..."; 
+            _searchText = string.Empty;
 
             DeleteCityCommand = new Command<City>(async (city) => await DeleteCityAsync(city));
             RefreshCommand = new Command(async () => await RefreshCitiesAsync());
+        }
+
+        private void UpdateFilteredCities()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                FilteredCities = new ObservableCollection<City>(Cities);
+            }
+            else
+            {
+                var filtered = Cities.Where(city => 
+                    city.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
+                    city.Country?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true).ToList();
+                FilteredCities = new ObservableCollection<City>(filtered);
+            }
         }
 
         private async Task DeleteCityAsync(City city)
@@ -141,13 +183,17 @@ namespace MeteoAPP.ViewModels
                 try
                 {
                     await _databaseService.DeleteCityAsync(city.Id);
-                    Cities.Remove(city);
+                    await LoadCitiesAsync();
                     Debug.WriteLine($"Città {city.Name} eliminata con successo.");
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Errore durante l'eliminazione della città: {ex.Message}");
-                    throw; 
+                    await Application.Current!.Windows[0].Page!.DisplayAlert(
+                        "Errore", 
+                        $"Impossibile eliminare la città: {ex.Message}", 
+                        "OK"
+                    );
                 }
             }
         }
