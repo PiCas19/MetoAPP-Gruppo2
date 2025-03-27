@@ -46,7 +46,8 @@ namespace MeteoAPP
         {
             try
             {
-                await Shell.Current.GoToAsync(nameof(AddItemPage));
+                var addItemPage = new AddItemPage(_viewModel);
+                await Navigation.PushAsync(addItemPage);
             }
             catch (Exception ex)
             {
