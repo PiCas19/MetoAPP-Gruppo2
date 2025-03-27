@@ -16,5 +16,4 @@
         ContentTemplate="{DataTemplate local:ListMeteoPage}"
         Route="ListMeteoPage"
         IsVisible="True" />
-
 </Shell>
