@@ -1,13 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MeteoAPP.MainPage">
-    <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25">
-            <Image Source="dotnet_bot.png" HeightRequest="185" Aspect="AspectFit" SemanticProperties.Description="dot net bot in a hovercraft number nine" />
-            <Label Text="Hello, World!" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
-            <Label Text="Welcome to .NET Multi-platform App UI" Style="{StaticResource SubHeadline}" SemanticProperties.HeadingLevel="Level2" SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
-            <Button x:Name="CounterBtn" Text="Click me" SemanticProperties.Hint="Counts the number of times you click" Clicked="OnCounterClicked" HorizontalOptions="Fill" />
-        </VerticalStackLayout>
-    </ScrollView>
+             x:Class="MeteoAPP.MainPage"
+             BackgroundColor="White"
+             Padding="20,50,20,20">
+
+    <VerticalStackLayout Spacing="20" HorizontalOptions="Center">
+        <Label x:Name="AppTitle"
+               Text="MeteoApp"
+               FontSize="36"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               TextColor="Black" />
+
+        <Label x:Name="AppDescription"
+               Text="MeteoApp ti consente di ottenere informazioni meteo accurate per qualsiasi città in tempo reale."
+               FontSize="18"
+               HorizontalOptions="Center"
+               TextColor="Gray"
+               Padding="10,0" />
+
+        <Button Text="Inizia"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                Padding="10, 15"
+                FontSize="18"
+                HorizontalOptions="Center"
+                Clicked="OnStartClicked" />
+
+    </VerticalStackLayout>
+
 </ContentPage>
