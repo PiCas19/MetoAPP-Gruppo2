@@ -24,7 +24,7 @@ namespace MeteoAPP.ViewModels
             {
                 _cities = value;
                 OnPropertyChanged();
-                UpdateFilteredCities(); // Aggiorna la lista filtrata quando cambia Cities
+                UpdateFilteredCities(); 
             }
         }
 
