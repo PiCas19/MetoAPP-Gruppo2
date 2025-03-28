@@ -27,21 +27,18 @@ namespace MeteoAPP
         {
             try
             {
-                Debug.WriteLine("Pagina: Inizio caricamento città");
-                await _viewModel.LoadCitiesAsync();
-                Debug.WriteLine($"Pagina: Numero di città: {_viewModel.Cities.Count}");
-                
+                await _viewModel.LoadCitiesAsync();                
                 await _viewModel.LoadCurrentLocationAsync();
                 
                 if (_viewModel.FilteredCities.Count == 0 && _viewModel.Cities.Count == 0)
                 {
-                    await DisplayAlert("Attenzione", "Nessuna città disponibile", "OK");
+                    await DisplayAlert("Attention", "No cities available", "OK");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Pagina: Errore nel caricamento delle città: {ex.Message}");
-                await DisplayAlert("Errore", "Impossibile caricare le città", "OK");
+                Debug.WriteLine($"Page: Error loading cities: {ex.Message}");
+                await DisplayAlert("Error", "Unable to upload cities", "OK");
             }
         }
 
@@ -54,8 +51,7 @@ namespace MeteoAPP
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore durante la navigazione: {ex.Message}");
-                await DisplayAlert("Errore", $"Errore durante la navigazione: {ex.Message}", "OK");
+                await DisplayAlert("Error", $"Error while browsing: {ex.Message}", "OK");
             }
         }
 
@@ -71,7 +67,7 @@ namespace MeteoAPP
                     var weather = await _weatherService.GetWeatherByCoordinatesAsync(selectedCity.Latitude, selectedCity.Longitude);
                     if (weather == null)
                     {
-                        await DisplayAlert("Errore", "Impossibile caricare i dati meteo", "OK");
+                        await DisplayAlert("Error", "Unable to upload weather data", "OK");
                         return;
                     }
 
@@ -89,8 +85,7 @@ namespace MeteoAPP
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Errore durante la navigazione: {ex.Message}");
-                    await DisplayAlert("Errore", $"Errore durante la navigazione: {ex.Message}", "OK");
+                    await DisplayAlert("Error", $"Error during navigation: {ex.Message}", "OK");
                 }
             }
         }
@@ -99,7 +94,7 @@ namespace MeteoAPP
         {
             if (sender is Button button && button.CommandParameter is City city)
             {
-                bool confirm = await DisplayAlert("Conferma", $"Vuoi eliminare {city.Name}?", "Sì", "No");
+                bool confirm = await DisplayAlert("Confirm", $"Do you want to eliminate {city.Name}?", "Yes", "No");
                 if (confirm)
                 {
                     try
@@ -108,8 +103,7 @@ namespace MeteoAPP
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Errore durante l'eliminazione della città: {ex.Message}");
-                        await DisplayAlert("Errore", $"Errore durante l'eliminazione: {ex.Message}", "OK");
+                        await DisplayAlert("Error", $"Error during elimination: {ex.Message}", "OK");
                     }
                 }
             }
@@ -127,8 +121,7 @@ namespace MeteoAPP
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Errore durante l'apertura delle impostazioni: {ex.Message}");
-                    await DisplayAlert("Errore", $"Impossibile aprire le impostazioni: {ex.Message}", "OK");
+                    await DisplayAlert("Error", $"Unable to open settings: {ex.Message}", "OK");
                 }
             }
          }
@@ -151,7 +144,7 @@ namespace MeteoAPP
 
                     if (weather == null)
                     {
-                        await DisplayAlert("Errore", "Impossibile caricare i dati meteo", "OK");
+                        await DisplayAlert("Error", "Unable to upload weather data", "OK");
                         return;
                     }
 
@@ -174,8 +167,7 @@ namespace MeteoAPP
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore durante il recupero della posizione corrente: {ex.Message}");
-                await DisplayAlert("Errore", $"Errore durante il recupero della posizione: {ex.Message}", "OK");
+                await DisplayAlert("Error", $"Error during position recovery: {ex.Message}", "OK");
             }
             finally
             {

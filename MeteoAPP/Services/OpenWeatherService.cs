@@ -19,7 +19,7 @@ namespace MeteoAPP.Services
             _apiKey = await LoadApiKeyFromConfigAsync();
             if (string.IsNullOrEmpty(_apiKey))
             {
-                throw new InvalidOperationException("La chiave API non è stata trovata nel file di configurazione.");
+                throw new InvalidOperationException("The API key was not found in the configuration file.");
             }
         }
 
@@ -62,7 +62,7 @@ namespace MeteoAPP.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Errore nel caricamento della chiave API: {ex.Message}");
+                Console.WriteLine($"Error loading API key: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 return string.Empty;
             }
@@ -82,7 +82,7 @@ namespace MeteoAPP.Services
 
                 if (weatherResponse == null)
                 {
-                    System.Diagnostics.Debug.WriteLine("Errore: Nessun dato meteo ricevuto");
+                    System.Diagnostics.Debug.WriteLine("Error: No weather data received.");
                     return null;
                 }
 
@@ -98,7 +98,7 @@ namespace MeteoAPP.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Errore in GetWeatherByCoordinatesAsync: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error in GetWeatherByCoordinatesAsync: {ex.Message}");
                 return null;
             }
         }

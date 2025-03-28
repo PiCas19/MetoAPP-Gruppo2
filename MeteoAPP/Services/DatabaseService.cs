@@ -18,9 +18,6 @@ namespace MeteoAPP.Services
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
                     "meteo.db3"
                 );
-
-                Debug.WriteLine($"Percorso database completo: {dbPath}");
-                Debug.WriteLine($"Directory padre: {Path.GetDirectoryName(dbPath)}");
                 
                 var directoryPath = Path.GetDirectoryName(dbPath);
                 if (!Directory.Exists(directoryPath))
@@ -28,11 +25,10 @@ namespace MeteoAPP.Services
                     try 
                     {
                         Directory.CreateDirectory(directoryPath!);
-                        Debug.WriteLine($"Directory creata: {directoryPath}");
                     }
                     catch (Exception dirEx)
                     {
-                        Debug.WriteLine($"Errore creazione directory: {dirEx.Message}");
+                        Debug.WriteLine($"Directory creation error: {dirEx.Message}");
                     }
                 }
 
@@ -40,7 +36,7 @@ namespace MeteoAPP.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore iniziale DatabaseService: {ex.Message}");
+                Debug.WriteLine($"Initial Error DatabaseService: {ex.Message}");
                 throw;
             }
         }
@@ -51,29 +47,23 @@ namespace MeteoAPP.Services
             {
                 try
                 {
-                    Debug.WriteLine("Inizio inizializzazione database");
                     await _databaseConnection.CreateTableAsync<City>();
-                    Debug.WriteLine("Tabella City creata");
                     bool isSeeded = Preferences.Get(SeededKey, false);
-                    Debug.WriteLine($"Database già inizializzato: {isSeeded}");
                     if (!isSeeded)
                     {
                         await SeedDatabaseAsync();
                         Preferences.Set(SeededKey, true);
-                        Debug.WriteLine("Database inizializzato con dati iniziali");
                     }
 
                     var existingCities = await _databaseConnection.Table<City>().ToListAsync();
-                    Debug.WriteLine($"Città esistenti: {existingCities.Count}");
-
                     _isInitialized = true;
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Errore durante l'inizializzazione del database: {ex.Message}");
+                    Debug.WriteLine($"Error during database initialization: {ex.Message}");
                     if (ex.InnerException != null)
                     {
-                        Debug.WriteLine($"Dettagli interni: {ex.InnerException.Message}");
+                        Debug.WriteLine($"Interior details: {ex.InnerException.Message}");
                     }
 
                     throw;
@@ -95,11 +85,10 @@ namespace MeteoAPP.Services
             try 
             {
                 await _databaseConnection.InsertAllAsync(cities);
-                Debug.WriteLine($"Inserite {cities.Count} città nel database.");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore durante l'inserimento delle città: {ex.Message}");
+                Debug.WriteLine($"Error when entering cities: {ex.Message}");
                 throw;
             }
         }
@@ -115,12 +104,11 @@ namespace MeteoAPP.Services
             await InitializeAsync();
             try
             {
-                Debug.WriteLine("Inizio recupero città");
                 var cities = await _databaseConnection.Table<City>().ToListAsync();
                 Debug.WriteLine($"Città recuperate: {cities.Count}");
                 if (cities.Count == 0)
                 {
-                    Debug.WriteLine("Nessuna città trovata nel database");
+                    Debug.WriteLine("No cities found in the database");
                 }
                 else
                 {

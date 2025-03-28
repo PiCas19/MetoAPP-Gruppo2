@@ -58,12 +58,12 @@ public partial class AddItemPage : ContentPage
             }
             else
             {
-                await DisplayAlert("Errore", locationResult.ErrorMessage, "OK");
+                await DisplayAlert("Error", locationResult.ErrorMessage, "OK");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Errore", $"Si è verificato un problema: {ex.Message}", "OK");
+            await DisplayAlert("Error", $"A problem occurred: {ex.Message}", "OK");
         }
         finally
         {
@@ -97,7 +97,7 @@ public partial class AddItemPage : ContentPage
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Errore durante la deserializzazione: {ex.Message}");
+                Console.WriteLine($"Error during deserialization: {ex.Message}");
             }
         }
     }
@@ -108,7 +108,7 @@ public partial class AddItemPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 3)
         {
-            await DisplayAlert("Errore", "Inserisci un nome di città valido (minimo 3 caratteri).", "OK");
+            await DisplayAlert("Error", "Enter a valid city name (minimum 3 characters).", "OK");
             return;
         }
 
@@ -124,19 +124,19 @@ public partial class AddItemPage : ContentPage
                 CitySearchEntry.Text = _addItemViewModel.CityName;
 
                 string js = $"updateLocation({_addItemViewModel.Latitude}, {_addItemViewModel.Longitude});";
-                Console.WriteLine($"Eseguo: {js}");
+                Console.WriteLine($"Execute: {js}");
                 var jsResult = await MapWebView.EvaluateJavaScriptAsync(js);
-                Console.WriteLine($"Risultato JS: {jsResult}");
+                Console.WriteLine($"Result JS: {jsResult}");
             }
             else
             {
-                await DisplayAlert("Errore", "Città non trovata.", "OK");
+                await DisplayAlert("Error", "City not found.", "OK");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Errore in OnSearchButtonClicked: {ex.Message}");
-            await DisplayAlert("Errore", $"Si è verificato un problema: {ex.Message}", "OK");
+            Console.WriteLine($"Error in OnSearchButtonClicked: {ex.Message}");
+            await DisplayAlert("Error", $"A problem occurred: {ex.Message}", "OK");
         }
         finally
         {
@@ -163,12 +163,12 @@ public partial class AddItemPage : ContentPage
     {
         if (e.Result != WebNavigationResult.Success)
         {
-            Console.WriteLine($"Errore di navigazione WebView: {e.Result}");
-            _ = DisplayAlert("Errore", "Impossibile caricare la mappa.", "OK");
+            Console.WriteLine($"WebView Navigation Error: {e.Result}");
+            _ = DisplayAlert("Error", "Unable to load map.", "OK");
         }
         else
         {
-            Console.WriteLine("WebView caricata con successo.");
+            Console.WriteLine("WebView successfully loaded.");
         }
     }
 }

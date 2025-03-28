@@ -83,10 +83,10 @@ namespace MeteoAPP.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Errore durante il recupero della posizione: {ex.Message}");
+                Console.WriteLine($"Error during position recovery: {ex.Message}");
             }
 
-            return "Posizione non trovata";
+            return "Position not found";
         }
 
         public async Task<GeoLocation?> GetCoordinatesFromCityAsync(string city)
@@ -103,7 +103,6 @@ namespace MeteoAPP.ViewModels
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Risposta API per '{city}': {json}");
                     var data = JsonSerializer.Deserialize<List<JsonElement>>(json);
 
                     if (data?.Count > 0)
@@ -112,8 +111,8 @@ namespace MeteoAPP.ViewModels
                         var lat = firstResult.GetProperty("lat").GetString();
                         var lon = firstResult.GetProperty("lon").GetString();
 
-                        string cityName = "Sconosciuto";
-                        string countryName = "Sconosciuto";
+                        string cityName = "Unknown";
+                        string countryName = "Unknown";
 
                         if (firstResult.TryGetProperty("display_name", out JsonElement displayName))
                         {
@@ -142,17 +141,17 @@ namespace MeteoAPP.ViewModels
                     }
                     else
                     {
-                        Console.WriteLine($"Nessun risultato trovato per '{city}'.");
+                        Console.WriteLine($"No results found for '{city}'.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"Errore API: {response.StatusCode}");
+                    Console.WriteLine($"API error: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Errore durante la ricerca della città: {ex.Message}");
+                Console.WriteLine($"Error during city search: {ex.Message}");
             }
 
             return null;

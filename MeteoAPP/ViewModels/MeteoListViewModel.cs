@@ -79,7 +79,7 @@ namespace MeteoAPP.ViewModels
             _databaseService = App.DatabaseService ?? throw new ArgumentNullException(nameof(App.DatabaseService));
             _cities = new ObservableCollection<City>();
             _filteredCities = new ObservableCollection<City>();
-            _currentCityName = "Caricamento..."; 
+            _currentCityName = "Loading..."; 
             _searchText = string.Empty;
 
             DeleteCityCommand = new Command<City>(async (city) => await DeleteCityAsync(city));
@@ -108,9 +108,9 @@ namespace MeteoAPP.ViewModels
             try
             {
                 bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlert(
-                    "Conferma",
-                    $"Vuoi eliminare {city.Name}?",
-                    "Sì",
+                    "Confirm",
+                    $"Do you want to eliminate {city.Name}?",
+                    "Yes",
                     "No");
 
                 if (confirm)
@@ -120,9 +120,10 @@ namespace MeteoAPP.ViewModels
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Impossible to eliminate the city: {ex.Message}");
                 await Application.Current!.Windows[0].Page!.DisplayAlert(
-                    "Errore",
-                    "Impossibile eliminare la città: " + ex.Message,
+                    "Error",
+                    "Impossible to eliminate the city",
                     "OK");
             }
         }
@@ -132,23 +133,20 @@ namespace MeteoAPP.ViewModels
             try
             {
                 IsLoading = true;
-                Debug.WriteLine("Caricamento delle città in corso...");
                 var cities = await _databaseService.GetAllCityAsync();
                 
                 if (cities == null || !cities.Any())
                 {
-                    Debug.WriteLine("Nessuna città trovata nel database.");
                     Cities = new ObservableCollection<City>();
                 }
                 else
                 {
                     Cities = new ObservableCollection<City>(cities);
-                    Debug.WriteLine($"Caricate {Cities.Count} città.");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore caricamento città: {ex.Message}");
+                Debug.WriteLine($"City loading error: {ex.Message}");
                 Cities = new ObservableCollection<City>();
             }
             finally
@@ -169,23 +167,21 @@ namespace MeteoAPP.ViewModels
                 if (Cities.Any(c => c.Name == city.Name && c.Country == city.Country))
                 {
                     await Application.Current!.Windows[0].Page!.DisplayAlert(
-                        "Avviso", 
-                        "Questa città è già presente nell'elenco.", 
+                        "Notice", 
+                        "This city is already listed.", 
                         "OK");
                     return;
                 }
 
                 await _databaseService.AddCityAsync(city);
                 await LoadCitiesAsync();
-
-                Debug.WriteLine($"Città {city.Name} aggiunta con successo.");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore durante l'aggiunta della città: {ex.Message}");
+                Debug.WriteLine($"Error while adding city: {ex.Message}");
                 await Application.Current!.Windows[0].Page!.DisplayAlert(
-                    "Errore", 
-                    $"Impossibile aggiungere la città: {ex.Message}", 
+                    "Error", 
+                    $"Unable to add city", 
                     "OK");
             }
         }
@@ -198,14 +194,13 @@ namespace MeteoAPP.ViewModels
                 {
                     await _databaseService.DeleteCityAsync(city.Id);
                     await LoadCitiesAsync();
-                    Debug.WriteLine($"Città {city.Name} eliminata con successo.");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Errore durante l'eliminazione della città: {ex.Message}");
+                    Debug.WriteLine($"Error during city deletion: {ex.Message}");
                     await Application.Current!.Windows[0].Page!.DisplayAlert(
-                        "Errore", 
-                        $"Impossibile eliminare la città: {ex.Message}", 
+                        "Error", 
+                        $"Unable to delete the city", 
                         "OK"
                     );
                 }
@@ -226,22 +221,22 @@ namespace MeteoAPP.ViewModels
 
                     if (weather != null)
                     {
-                        CurrentCityName = weather.Location ?? "Posizione sconosciuta"; 
+                        CurrentCityName = weather.Location ?? "Position unknown"; 
                     }
                     else
                     {
-                        CurrentCityName = "Posizione sconosciuta"; 
+                        CurrentCityName = "Position unknown"; 
                     }
                 }
                 else
                 {
-                    CurrentCityName = "Posizione sconosciuta"; 
+                    CurrentCityName = "Position unknown"; 
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore durante il caricamento della posizione corrente: {ex.Message}");
-                CurrentCityName = "Errore";
+                Debug.WriteLine($"Error while loading the current position: {ex.Message}");
+                CurrentCityName = "Error";
             }
         }
     }

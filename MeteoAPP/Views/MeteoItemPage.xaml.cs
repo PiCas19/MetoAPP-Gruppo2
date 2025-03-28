@@ -89,7 +89,6 @@ namespace MeteoAPP
             {
                 if (CityNameLabel == null || WeatherLabel == null || TemperatureLabel == null || TemperatureMinLabel == null || TemperatureMaxLabel == null || WeatherIcon == null)
                 {
-                    Debug.WriteLine("Errore: Uno o più controlli UI non sono inizializzati.");
                     return;
                 }
 
@@ -103,8 +102,8 @@ namespace MeteoAPP
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Errore in UpdateUI: {ex.Message}");
-                Shell.Current.DisplayAlert("Errore", "Impossibile aggiornare i dati meteo", "OK");
+                Debug.WriteLine($"Error in UpdateUI: {ex.Message}");
+                Shell.Current.DisplayAlert("Error", "Unable to update weather data", "OK");
             }
         }
 
@@ -140,7 +139,6 @@ namespace MeteoAPP
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            Debug.WriteLine("MeteoItemPage OnAppearing chiamato");
             UpdateUI();
         }
     }

@@ -17,7 +17,7 @@ namespace MeteoAPP
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Errore", $"Impossibile procedere: {ex.Message}", "OK");
+                await DisplayAlert("Error", $"Unable to proceed: {ex.Message}", "OK");
             }
         }
     }
