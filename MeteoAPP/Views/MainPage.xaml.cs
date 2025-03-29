@@ -1,4 +1,4 @@
-﻿using MeteoApp;
+﻿using Plugin.Firebase.CloudMessaging;
 
 namespace MeteoAPP
 {
@@ -13,7 +13,10 @@ namespace MeteoAPP
         {
             try
             {
-                await Shell.Current.GoToAsync("//ListMeteoPage");
+                await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+                var token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
+                await DisplayAlert("OK", token, "Ok");
+                //await Shell.Current.GoToAsync("//ListMeteoPage");
             }
             catch (Exception ex)
             {

@@ -2,3 +2,5 @@
 MeteoApp/bin/
 MeteoApp/obj/
 config.json
+google-services.json
+GoogleService-Info.plist

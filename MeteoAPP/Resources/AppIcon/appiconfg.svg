@@ -1,33 +1,257 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <!-- Definizione della sfumatura per la nuvola -->
-    <defs>
-        <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#2A6AC2;stop-opacity:1" />
-        </linearGradient>
-    </defs>
+<svg
+   width="456"
+   height="456"
+   viewBox="0 0 456 456"
+   version="1.1"
+   xml:space="preserve"
+   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2"
+   id="svg54"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs55" />
 
-    <!-- Rettangolo di sfondo dell'icona con bordi arrotondati, centrato -->
-    <rect x="128" y="128" width="200" height="200" rx="30" fill="#1A2A44" stroke="#FFFFFF" stroke-width="10" style="fill-rule:nonzero;stroke-linejoin:round;stroke-miterlimit:2;" />
 
-    <!-- Sole (disegnato prima, quindi sotto la nuvola) -->
-    <circle cx="278" cy="188" r="30" fill="#F5A623" style="fill-rule:nonzero;stroke-linejoin:round;stroke-miterlimit:2;" />
-    <path d="M278,138 L278,128 M278,238 L278,248 M228,188 L218,188 M328,188 L338,188 M248,158 L238,148 M308,218 L318,228 M248,218 L238,228 M308,158 L318,148" stroke="#FFFFFF" stroke-width="5" style="fill:none;stroke-linejoin:round;stroke-miterlimit:2;" />
-
-    <!-- Nuvole (composta da cerchi sovrapposti, ruotata di 180 gradi a sinistra) -->
-    <g transform="rotate(180, 228, 228)" stroke="#FFFFFF" stroke-width="5" style="fill-rule:nonzero;stroke-linejoin:round;stroke-miterlimit:2;">
-        <circle cx="228" cy="228" r="40" fill="url(#cloudGradient)" />
-        <circle cx="188" cy="208" r="35" fill="url(#cloudGradient)" />
-        <circle cx="268" cy="208" r="30" fill="url(#cloudGradient)" />
-        <circle cx="208" cy="248" r="30" fill="url(#cloudGradient)" />
-        <circle cx="248" cy="238" r="25" fill="url(#cloudGradient)" />
-    </g>
-
-    <!-- Pioggia -->
-    <path d="M178,258 L158,298 M198,258 L178,298 M218,258 L198,298" stroke="#FFFFFF" stroke-width="10" style="fill:none;stroke-linejoin:round;stroke-miterlimit:2;" />
-
-    <!-- Fiocco di neve -->
-    <path d="M298,278 L308,278 M303,273 L303,283 M298,273 L308,283 M298,283 L308,273" stroke="#FFFFFF" stroke-width="5" style="fill:none;stroke-linejoin:round;stroke-miterlimit:2;" />
+<g
+   id="SVGRepo_iconCarrier"
+   transform="matrix(8.7292757,0,0,8.7941435,118.6589,108.18022)"> <path
+   opacity="0.5"
+   d="m 13.6329,5.35825 c -2.7257,-2.72571 -7.14854,-2.72571 -9.87426,0 -2.72571,2.72572 -2.72571,7.14855 0,9.87425 2.72572,2.7258 7.14856,2.7258 9.87426,0 2.7315,-2.7257 2.7315,-7.14853 0,-9.87425 z"
+   fill="url(#paint0_radial)"
+   id="path1"
+   style="fill:url(#paint0_radial)" /> <path
+   d="m 8.69575,15.2782 c 2.75195,0 4.98285,-2.2309 4.98285,-4.9828 0,-2.752 -2.2309,-4.9829 -4.98285,-4.9829 -2.75196,0 -4.98286,2.2309 -4.98286,4.9829 0,2.7519 2.2309,4.9828 4.98286,4.9828 z"
+   fill="url(#paint1_radial)"
+   id="path2"
+   style="fill:url(#paint1_radial)" /> <path
+   d="m 8.69575,15.2782 c 2.75195,0 4.98285,-2.2309 4.98285,-4.9828 0,-2.752 -2.2309,-4.9829 -4.98285,-4.9829 -2.75196,0 -4.98286,2.2309 -4.98286,4.9829 0,2.7519 2.2309,4.9828 4.98286,4.9828 z"
+   fill="url(#paint2_radial)"
+   id="path3"
+   style="fill:url(#paint2_radial)" /> <path
+   d="m 9.53587,16.8154 c 2.06083,0 3.73143,-1.6706 3.73143,-3.7314 0,-2.0608 -1.6706,-3.73146 -3.73143,-3.73146 -2.06081,0 -3.73143,1.67066 -3.73143,3.73146 0,2.0608 1.67062,3.7314 3.73143,3.7314 z"
+   fill="url(#paint3_radial)"
+   id="path4"
+   style="fill:url(#paint3_radial)" /> <path
+   d="m 14.473,16.0954 c 2.2817,0 4.1314,-1.8497 4.1314,-4.1315 0,-2.28168 -1.8497,-4.13138 -4.1314,-4.13138 -2.2817,0 -4.1314,1.8497 -4.1314,4.13138 0,2.2818 1.8497,4.1315 4.1314,4.1315 z"
+   fill="url(#paint4_radial)"
+   id="path5"
+   style="fill:url(#paint4_radial)" /> <path
+   d="m 12.713,19.5525 c 1.9093,0 3.4571,-1.5478 3.4571,-3.4572 0,-1.9093 -1.5478,-3.4571 -3.4571,-3.4571 -1.9093,0 -3.45714,1.5478 -3.45714,3.4571 0,1.9094 1.54784,3.4572 3.45714,3.4572 z"
+   fill="url(#paint5_radial)"
+   id="path6"
+   style="fill:url(#paint5_radial)" /> <path
+   d="M 6.0271,20.644 H 17.65 V 15.6211 H 6.68996 Z"
+   fill="url(#paint6_linear)"
+   id="path7"
+   style="fill:url(#paint6_linear)" /> <path
+   d="m 17.6499,20.6441 c 2.5595,0 4.6343,-2.0749 4.6343,-4.6343 0,-2.5595 -2.0748,-4.6343 -4.6343,-4.6343 -2.5594,0 -4.6343,2.0748 -4.6343,4.6343 0,2.5594 2.0749,4.6343 4.6343,4.6343 z"
+   fill="url(#paint7_radial)"
+   id="path8"
+   style="fill:url(#paint7_radial)" /> <path
+   d="m 18.9413,20.4609 c -2.4571,0.7143 -5.0286,-0.7028 -5.7428,-3.16 -0.7143,-2.4571 0.7028,-5.0285 3.16,-5.7428 2.4571,-0.7143 5.0285,0.7028 5.7428,3.16 0.7143,2.4571 -0.7028,5.0285 -3.16,5.7428 z"
+   fill="url(#paint8_radial)"
+   id="path9"
+   style="fill:url(#paint8_radial)" /> <path
+   d="M 10.2102,9.40954 C 9.99302,9.36954 9.76444,9.34668 9.53587,9.34668 c -2.06286,0 -3.73143,1.67432 -3.73143,3.73142 0,0.8114 0.26286,1.5657 0.70286,2.1829 L 7.91873,14.2381 C 7.09016,12.3524 7.52444,9.90097 10.2102,9.40954 Z"
+   fill="url(#paint9_radial)"
+   id="path10"
+   style="fill:url(#paint9_radial)" /> <path
+   d="m 6.02733,20.644 c 2.06081,0 3.73143,-1.6706 3.73143,-3.7314 0,-2.0608 -1.67062,-3.7314 -3.73143,-3.7314 -2.06081,0 -3.73143,1.6706 -3.73143,3.7314 0,2.0608 1.67062,3.7314 3.73143,3.7314 z"
+   fill="url(#paint10_radial)"
+   id="path11"
+   style="fill:url(#paint10_radial)" /> <defs
+   id="defs54"><radialGradient
+     id="paint0_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(6.9839,0,0,6.9839,8.69692,10.2965)"> <stop
+   offset="0.682292"
+   stop-color="#FCCE38"
+   stop-opacity="0"
+   id="stop11" /> <stop
+   offset="1"
+   stop-color="#FCCE38"
+   id="stop12" /> </radialGradient><radialGradient
+     id="paint1_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(6.82362,0,0,6.82362,7.3707,8.29139)"> <stop
+   stop-color="#FBE07A"
+   id="stop13" /> <stop
+   offset="1"
+   stop-color="#FF9D00"
+   id="stop14" /> </radialGradient><radialGradient
+     id="paint2_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(1.0765849,1.8920169,-3.5577778,2.0244269,7.27959,7.92)"> <stop
+   stop-color="white"
+   stop-opacity="0.5"
+   id="stop15" /> <stop
+   offset="1"
+   stop-color="white"
+   stop-opacity="0"
+   id="stop16" /> </radialGradient><radialGradient
+     id="paint3_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(8.6494,0,0,8.6494,10.1295,14.381)"> <stop
+   stop-color="white"
+   id="stop17" /> <stop
+   offset="0.3454"
+   stop-color="#FCFDFD"
+   id="stop18" /> <stop
+   offset="0.5956"
+   stop-color="#F3F6F7"
+   id="stop19" /> <stop
+   offset="0.815"
+   stop-color="#E3EBEC"
+   id="stop20" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop21" /> </radialGradient><radialGradient
+     id="paint4_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(6.94231,0,0,6.94231,11.9714,13.2635)"> <stop
+   stop-color="white"
+   id="stop22" /> <stop
+   offset="0.3454"
+   stop-color="#FCFDFD"
+   id="stop23" /> <stop
+   offset="0.5956"
+   stop-color="#F3F6F7"
+   id="stop24" /> <stop
+   offset="0.815"
+   stop-color="#E3EBEC"
+   id="stop25" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop26" /> </radialGradient><radialGradient
+     id="paint5_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(4.65688,0,0,4.65688,12.1784,16.3677)"> <stop
+   stop-color="white"
+   id="stop27" /> <stop
+   offset="0.3454"
+   stop-color="#FCFDFD"
+   id="stop28" /> <stop
+   offset="0.5956"
+   stop-color="#F3F6F7"
+   id="stop29" /> <stop
+   offset="0.815"
+   stop-color="#E3EBEC"
+   id="stop30" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop31" /> </radialGradient><linearGradient
+     id="paint6_linear"
+     x1="11.8376"
+     y1="14.0085"
+     x2="11.8376"
+     y2="20.842501"
+     gradientUnits="userSpaceOnUse"> <stop
+   stop-color="white"
+   id="stop32" /> <stop
+   offset="0.3454"
+   stop-color="#FCFDFD"
+   id="stop33" /> <stop
+   offset="0.5956"
+   stop-color="#F3F6F7"
+   id="stop34" /> <stop
+   offset="0.815"
+   stop-color="#E3EBEC"
+   id="stop35" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop36" /> </linearGradient><radialGradient
+     id="paint7_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(9.16822,0,0,9.16822,16.193,12.0219)"> <stop
+   stop-color="white"
+   id="stop37" /> <stop
+   offset="0.345"
+   stop-color="#FCFDFD"
+   id="stop38" /> <stop
+   offset="0.5948"
+   stop-color="#F3F6F7"
+   id="stop39" /> <stop
+   offset="0.8139"
+   stop-color="#E3EBEC"
+   id="stop40" /> <stop
+   offset="0.9987"
+   stop-color="#CFDCDE"
+   id="stop41" /> </radialGradient><radialGradient
+     id="paint8_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(2.3831768,8.2094726,-8.2086851,2.3829482,14.0774,12.8593)"> <stop
+   stop-color="white"
+   id="stop42" /> <stop
+   offset="0.3454"
+   stop-color="#FCFDFD"
+   id="stop43" /> <stop
+   offset="0.5956"
+   stop-color="#F3F6F7"
+   id="stop44" /> <stop
+   offset="0.815"
+   stop-color="#E3EBEC"
+   id="stop45" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop46" /> </radialGradient><radialGradient
+     id="paint9_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(-4.5143163,8.0857003,-8.0857003,-4.5143163,7.99874,9.36955)"> <stop
+   stop-color="#CFDCDE"
+   stop-opacity="0"
+   id="stop47" /> <stop
+   offset="0.8869"
+   stop-color="#CFDCDE"
+   stop-opacity="0.8869"
+   id="stop48" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop49" /> </radialGradient><radialGradient
+     id="paint10_radial"
+     cx="0"
+     cy="0"
+     r="1"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(7.20081,0,0,7.20081,8.49462,13.6568)"> <stop
+   stop-color="white"
+   id="stop50" /> <stop
+   offset="0.3454"
+   stop-color="#FCFDFD"
+   id="stop51" /> <stop
+   offset="0.5956"
+   stop-color="#F3F6F7"
+   id="stop52" /> <stop
+   offset="0.815"
+   stop-color="#E3EBEC"
+   id="stop53" /> <stop
+   offset="1"
+   stop-color="#CFDCDE"
+   id="stop54" /> </radialGradient></defs> </g>
 </svg>
