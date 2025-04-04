@@ -1,5 +1,4 @@
 @page "/"
-@inject MeteoAPP.Services.ParameterService parameterService
 
 <h1>Ciao da Blazor Hybrid!</h1>
 
@@ -10,12 +9,7 @@
 <p>Contatore: @count</p>
 
 @code {
-    [Parameter] public int Start { get; set; }
     private int count = 0;
-    protected override void OnInitialized()
-    {
-        count = 0;
-    }
 
     private void IncrementCount()
     {
