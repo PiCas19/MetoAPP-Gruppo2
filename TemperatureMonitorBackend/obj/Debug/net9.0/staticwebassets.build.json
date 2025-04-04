@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "Na0akQ9rEdC8aWYx3tfc9uE5XJm8tzOTRuW9RKjDd2Y=",
+  "Source": "TemperatureMonitorBackend",
+  "BasePath": "_content/TemperatureMonitorBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

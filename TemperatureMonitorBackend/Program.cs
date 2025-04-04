@@ -1,7 +1,37 @@
-using TemperatureMonitorBackend;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
+using Microsoft.Extensions.Logging;
 
-var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+namespace BackendProject
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
 
-var host = builder.Build();
-host.Run();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+
+                    FirebaseApp.Create(new AppOptions()
+                    {
+                        Credential = GoogleCredential.FromFile(Path.Combine(AppContext.BaseDirectory, "serviceAccountKey.json"))
+                    });
+
+                    services.AddHostedService<TemperatureMonitoringService>();
+
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                });
+    }
+}

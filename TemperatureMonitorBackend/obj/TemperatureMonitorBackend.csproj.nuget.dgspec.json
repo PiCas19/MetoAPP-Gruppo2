@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/pierpaolocasati/MetoAPP-Gruppo2/TemperatureMonitorBackend/TemperatureMonitorBackend.csproj": {}
+    "C:\\Users\\Elsa\\Desktop\\Scuola\\3Anno\\2Semestre\\Mobile\\MetoAPP-Gruppo2\\TemperatureMonitorBackend\\TemperatureMonitorBackend.csproj": {}
   },
   "projects": {
-    "/Users/pierpaolocasati/MetoAPP-Gruppo2/TemperatureMonitorBackend/TemperatureMonitorBackend.csproj": {
+    "C:\\Users\\Elsa\\Desktop\\Scuola\\3Anno\\2Semestre\\Mobile\\MetoAPP-Gruppo2\\TemperatureMonitorBackend\\TemperatureMonitorBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/pierpaolocasati/MetoAPP-Gruppo2/TemperatureMonitorBackend/TemperatureMonitorBackend.csproj",
+        "projectUniqueName": "C:\\Users\\Elsa\\Desktop\\Scuola\\3Anno\\2Semestre\\Mobile\\MetoAPP-Gruppo2\\TemperatureMonitorBackend\\TemperatureMonitorBackend.csproj",
         "projectName": "TemperatureMonitorBackend",
-        "projectPath": "/Users/pierpaolocasati/MetoAPP-Gruppo2/TemperatureMonitorBackend/TemperatureMonitorBackend.csproj",
-        "packagesPath": "/Users/pierpaolocasati/.nuget/packages/",
-        "outputPath": "/Users/pierpaolocasati/MetoAPP-Gruppo2/TemperatureMonitorBackend/obj/",
+        "projectPath": "C:\\Users\\Elsa\\Desktop\\Scuola\\3Anno\\2Semestre\\Mobile\\MetoAPP-Gruppo2\\TemperatureMonitorBackend\\TemperatureMonitorBackend.csproj",
+        "packagesPath": "C:\\Users\\Elsa\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Elsa\\Desktop\\Scuola\\3Anno\\2Semestre\\Mobile\\MetoAPP-Gruppo2\\TemperatureMonitorBackend\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/pierpaolocasati/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Elsa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -53,6 +59,10 @@
               "target": "Package",
               "version": "[1.69.0, )"
             },
+            "Microsoft.AspNetCore.Mvc": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "Microsoft.Extensions.Hosting": {
               "target": "Package",
               "version": "[9.0.2, )"
@@ -70,11 +80,14 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
