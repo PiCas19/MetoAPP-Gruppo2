@@ -10,10 +10,15 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage"
-        IsVisible="True" />
+        IsVisible="True"/>
     <ShellContent
         Title="Meteo List"
         ContentTemplate="{DataTemplate local:ListMeteoPage}"
         Route="ListMeteoPage"
-        IsVisible="True" />
+        IsVisible="True"/>
+    <ShellContent
+        Title="Blazor Page"
+        ContentTemplate="{DataTemplate local:BlazorPage}"
+        Route="BlazorPage"
+        IsVisible="True"/>
 </Shell>
