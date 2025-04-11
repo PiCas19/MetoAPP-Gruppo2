@@ -16,5 +16,8 @@ namespace BackendProject
 
         [FirestoreProperty]
         public double TemperatureMin { get; set; }
+        
+        [FirestoreProperty]
+        public bool IsEnabled { get; set; } = true; 
     }
 }

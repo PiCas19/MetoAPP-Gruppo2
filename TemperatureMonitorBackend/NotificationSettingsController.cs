@@ -16,37 +16,67 @@ namespace BackendProject.Controllers
         {
             _firestoreDb = firestoreDb;
         }
-
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserNotificationSettings[] settings)
         {
-            if (settings == null)
-                return BadRequest("Invalid payload.");
+            if (settings == null || settings.Length == 0)
+                return BadRequest("Payload non valido.");
 
-            // Salva le impostazioni in Firestore
+            var settingsRef = _firestoreDb.Collection("settings");
+
             foreach (var setting in settings)
             {
-                var document = _firestoreDb.Collection("settings").Document();  // Crea un nuovo documento nella collezione 'settings'
-                await document.SetAsync(setting);  // Salva l'oggetto nel documento
+                var query = settingsRef
+                    .WhereEqualTo("Token", setting.Token)
+                    .WhereEqualTo("Location", setting.Location);
+                var snapshot = await query.GetSnapshotAsync();
+
+                if (snapshot.Count > 0)
+                {
+                    foreach (var doc in snapshot.Documents)
+                    {
+                        var docRef = settingsRef.Document(doc.Id);
+                        var updates = new Dictionary<string, object>
+                        {
+                            { "TemperatureMax", setting.TemperatureMax },
+                            { "TemperatureMin", setting.TemperatureMin },
+                            { "IsEnabled", setting.IsEnabled }
+                        };
+                        await docRef.UpdateAsync(updates);
+                    }
+                }
+                else
+                {
+                    // Crea un nuovo documento
+                    var newDoc = settingsRef.Document();
+                    await newDoc.SetAsync(setting);
+                }
             }
 
-            return Ok(new { message = "Settings saved to Firestore." });
+            return Ok(new { message = "Impostazioni salvate o aggiornate con successo." });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] string token, [FromQuery] string location)
         {
-            // Ottieni tutte le impostazioni dalla collezione 'settings'
-            var settingsSnapshot = await _firestoreDb.Collection("settings").GetSnapshotAsync();
-            var settings = new List<UserNotificationSettings>();
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(location))
+                return BadRequest("Token e location sono obbligatori.");
 
-            foreach (var document in settingsSnapshot.Documents)
+            var settingsRef = _firestoreDb.Collection("settings");
+            var query = settingsRef
+                .WhereEqualTo("Token", token)
+                .WhereEqualTo("Location", location);
+            var snapshot = await query.GetSnapshotAsync();
+
+            var results = new List<UserNotificationSettings>();
+            foreach (var doc in snapshot.Documents)
             {
-                var setting = document.ConvertTo<UserNotificationSettings>();
-                settings.Add(setting);
+                var setting = doc.ConvertTo<UserNotificationSettings>();
+                results.Add(setting);
             }
 
-            return Ok(settings);
+            return Ok(results);
         }
+
     }
 }

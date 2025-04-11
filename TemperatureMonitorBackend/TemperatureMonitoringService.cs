@@ -1,4 +1,5 @@
 using FirebaseAdmin.Messaging;
+using Google.Cloud.Firestore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,33 +11,34 @@ namespace BackendProject
     public class TemperatureMonitoringService : BackgroundService
     {
         private readonly ILogger<TemperatureMonitoringService> _logger;
+        private readonly FirestoreDb _firestoreDb;
 
-        public TemperatureMonitoringService(ILogger<TemperatureMonitoringService> logger)
+        public TemperatureMonitoringService(ILogger<TemperatureMonitoringService> logger, FirestoreDb firestoreDb)
         {
             _logger = logger;
+            _firestoreDb = firestoreDb;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // Imposta l'intervallo di controllo (ad esempio, ogni 5 minuti)
             TimeSpan interval = TimeSpan.FromMinutes(5);
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    // Recupera le impostazioni degli utenti dal repository in memoria
-                    var userSettings = NotificationSettingsRepository.Settings.ToArray();
+                    var settingsRef = _firestoreDb.Collection("settings");
+                    var query = settingsRef.WhereEqualTo("IsEnabled", true);
+                    var snapshot = await query.GetSnapshotAsync();
 
-                    foreach (var settings in userSettings)
+                    foreach (var doc in snapshot.Documents)
                     {
-                        // Recupera la temperatura attuale per la località dell'utente (qui simulata)
+                        var settings = doc.ConvertTo<UserNotificationSettings>();
+
                         double currentTemp = await GetTemperatureForLocationAsync(settings.Location);
 
-                        // Controlla se la temperatura supera le soglie configurate
                         if (currentTemp > settings.TemperatureMax || currentTemp < settings.TemperatureMin)
                         {
-                            // Invia una notifica push
                             await SendTemperatureAlertAsync(settings.Token, settings.Location, currentTemp, settings.TemperatureMax, settings.TemperatureMin);
                         }
                     }
@@ -50,14 +52,11 @@ namespace BackendProject
             }
         }
 
-        // Metodo simulato per ottenere la temperatura attuale da un'API meteo (da sostituire con una chiamata HTTP reale)
         private Task<double> GetTemperatureForLocationAsync(string location)
         {
-            // Per l'esempio, restituisce un valore fisso
             return Task.FromResult(32.0);
         }
 
-        // Metodo per inviare la notifica tramite Firebase Admian SDK
         private async Task SendTemperatureAlertAsync(string deviceToken, string location, double currentTemp, double tempMax, double tempMin)
         {
             var message = new Message()

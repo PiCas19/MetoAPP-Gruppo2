@@ -1,9 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using MeteoAPP.Models;
-using System.Net.Http;
-using System.Text;
 using Plugin.Firebase.CloudMessaging;
-
 
 namespace MeteoAPP.ViewModels
 {
@@ -36,7 +34,13 @@ namespace MeteoAPP.ViewModels
         public bool IsNotificationEnabled
         {
             get => _isNotificationEnabled;
-            set => SetProperty(ref _isNotificationEnabled, value);
+            set
+            {
+                if (SetProperty(ref _isNotificationEnabled, value))
+                {
+                    SaveNotificationPreference();
+                }
+            }
         }
 
         public NotificationSettingsViewModel(City city, HttpClient httpClient)
@@ -46,26 +50,82 @@ namespace MeteoAPP.ViewModels
             LoadSettings();
         }
 
+        private string GeneratePreferenceKey(string token, string location)
+        {
+            return $"notifications_enabled_{token}_{location}";
+        }
+
         private async void LoadSettings()
         {
             try
             {
-                var cityKey = $"{City.Name}_{City.Country}";
-                var response = await _httpClient.GetAsync($"http://localhost:5000/api/NotificationSettings?cityKey={cityKey}");
+                string token = string.Empty;
+                try
+                {
+                    await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+                    token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
+                    Console.WriteLine("Token Firebase ottenuto: " + token);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Errore nell'ottenere il token Firebase: " + ex.Message);
+                }
+
+                var baseUrl = "https://ec0d-2a02-1210-6029-2600-79cb-5506-4701-cb2b.ngrok-free.app/api/NotificationSettings";
+                var builder = new UriBuilder(baseUrl);
+                var query = System.Web.HttpUtility.ParseQueryString(builder.Query);
+                query["token"] = token;
+                query["location"] = $"{City.Name}, {City.Country}";
+                builder.Query = query.ToString();
+                var url = builder.ToString();
+
+                var response = await _httpClient.GetAsync(url);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    var settings = JsonSerializer.Deserialize<NotificationSettings>(content);
+                    var settingsList = JsonSerializer.Deserialize<List<UserNotificationSettings>>(content);
 
-                    HighTemperatureThreshold = settings?.HighTemperatureThreshold ?? 30.0;
-                    LowTemperatureThreshold = settings?.LowTemperatureThreshold ?? 10.0;
-                    IsNotificationEnabled = settings?.IsNotificationEnabled ?? true;
+                    if (settingsList != null && settingsList.Count > 0)
+                    {
+                        var settings = settingsList[0];
+                        HighTemperatureThreshold = settings.TemperatureMax;
+                        LowTemperatureThreshold = settings.TemperatureMin;
+
+                        // Retrieve the notification preference
+                        var preferenceKey = GeneratePreferenceKey(token, settings.Location!);
+                        IsNotificationEnabled = Preferences.Get(preferenceKey, true);
+                    }
+                    else
+                    {
+                        HighTemperatureThreshold = 30.0;
+                        LowTemperatureThreshold = 10.0;
+                        IsNotificationEnabled = false;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Errore nel caricamento delle impostazioni: " + response.ReasonPhrase);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error loading settings: " + ex.Message);
+                Console.WriteLine("Errore nel caricamento delle impostazioni: " + ex.Message);
+            }
+        }
+
+        private void SaveNotificationPreference()
+        {
+            try
+            {
+                var token = Preferences.Get("firebase_token", string.Empty);
+                var location = $"{City.Name}, {City.Country}";
+                var preferenceKey = GeneratePreferenceKey(token, location);
+                Preferences.Set(preferenceKey, IsNotificationEnabled);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Errore nel salvataggio della preferenza di notifica: " + ex.Message);
             }
         }
 
@@ -76,66 +136,53 @@ namespace MeteoAPP.ViewModels
                 // Controllo che la soglia di temperatura alta sia maggiore di quella bassa
                 if (IsNotificationEnabled && HighTemperatureThreshold <= LowTemperatureThreshold)
                 {
-                    throw new InvalidOperationException("High temperature threshold must be greater than low temperature threshold.");
+                    throw new InvalidOperationException("La soglia di temperatura alta deve essere maggiore di quella bassa.");
                 }
 
-                var cityKey = $"{City.Name}_{City.Country}";
-                var settings = new NotificationSettings
+                // Ottenere il token da Firebase Cloud Messaging
+                string token = string.Empty;
+                try
                 {
-                    HighTemperatureThreshold = HighTemperatureThreshold,
-                    LowTemperatureThreshold = LowTemperatureThreshold,
-                    IsNotificationEnabled = IsNotificationEnabled
+                    await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+                    token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
+                    Console.WriteLine("Token Firebase ottenuto: " + token);
+
+                    // Save token for later use
+                    Preferences.Set("firebase_token", token);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Errore nell'ottenere il token Firebase: " + ex.Message);
+                    // Gestisci l'errore (ad esempio, il token potrebbe non essere disponibile)
+                }
+
+                // Creare l'oggetto UserNotificationSettings
+                var userNotificationSettings = new UserNotificationSettings
+                {
+                    Token = token,
+                    Location = $"{City.Name}, {City.Country}",
+                    TemperatureMax = HighTemperatureThreshold,
+                    TemperatureMin = LowTemperatureThreshold,
+                    IsEnabled = IsNotificationEnabled
                 };
 
-                var content = new StringContent(JsonSerializer.Serialize(settings), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync("http://localhost:5000/api/NotificationSettings", content);
+                // Serializzare e inviare l'array JSON
+                var settingsList = new List<UserNotificationSettings> { userNotificationSettings };
+                var content = new StringContent(JsonSerializer.Serialize(settingsList), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync("https://ec0d-2a02-1210-6029-2600-79cb-5506-4701-cb2b.ngrok-free.app/api/NotificationSettings", content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Settings saved successfully.");
-
-                    string token = string.Empty;
-                    try
-                    {
-                        // Ottenere il token da Firebase Cloud Messaging
-                        await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
-                        token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
-                        Console.WriteLine("Firebase token obtained: " + token);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Error obtaining Firebase token: " + ex.Message);
-                        // Gestisci l'errore (ad esempio, il token potrebbe non essere disponibile)
-                    }
-
-                    // Crea un oggetto UserNotificationSettings
-                    var userNotificationSettings = new UserNotificationSettings
-                    {
-                        Token = token,  // Aggiungi il token ottenuto
-                        Location = $"{City.Name}, {City.Country}",
-                        TemperatureMax = HighTemperatureThreshold,
-                        TemperatureMin = LowTemperatureThreshold
-                    };
-
-                    // Serializza e invia a Firestore
-                    var firestoreContent = new StringContent(JsonSerializer.Serialize(userNotificationSettings), Encoding.UTF8, "application/json");
-                    var firestoreResponse = await _httpClient.PostAsync("http://localhost:5000/api/UserNotificationSettings", firestoreContent);
-
-                    if (firestoreResponse.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine("User notification settings saved to Firestore.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error saving user notification settings: " + firestoreResponse.ReasonPhrase);
-                    }
-
-                    await RegisterCityForNotificationsAsync();
+                    Console.WriteLine("Impostazioni di notifica utente salvate con successo.");
                 }
                 else
                 {
-                    Console.WriteLine("Error saving settings: " + response.ReasonPhrase);
+                    Console.WriteLine("Errore nel salvataggio delle impostazioni di notifica utente: " + response.ReasonPhrase);
                 }
+
+                // Save the notification preference
+                SaveNotificationPreference();
 
                 // Aggiorna le proprietà nel modello
                 OnPropertyChanged(nameof(HighTemperatureThreshold));
@@ -147,14 +194,6 @@ namespace MeteoAPP.ViewModels
                 Console.WriteLine(ex);
                 throw;
             }
-        }
-
-
-
-        private async Task RegisterCityForNotificationsAsync()
-        {
-            await Task.CompletedTask;
-            Console.WriteLine($"Registered {City.Name}, {City.Country} for temperature notifications");
         }
     }
 }
