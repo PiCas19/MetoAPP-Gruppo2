@@ -59,13 +59,17 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Label x:Name="CityNameLabel"
-               Grid.Row="0"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
-               Text="London, UK"
-               FontSize="28"
-               FontAttributes="Bold"
-               Style="{StaticResource WeatherTextStyle}" />
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Text="London, UK"
+            FontSize="28"
+            FontAttributes="Bold"
+            Style="{StaticResource WeatherTextStyle}">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCityLabelTapped" />
+            </Label.GestureRecognizers>
+        </Label>
         <StackLayout Grid.Row="1"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"

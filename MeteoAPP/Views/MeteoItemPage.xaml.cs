@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MeteoAPP.Services;
 
 namespace MeteoAPP
 {
@@ -11,6 +12,8 @@ namespace MeteoAPP
 
     public partial class MeteoItemPage : ContentPage
     {
+
+        private readonly IParameterService _parameterService;
         private string? _cityName;
         private string? _temperature;
         private string? _temperatureMin;
@@ -18,9 +21,11 @@ namespace MeteoAPP
         private string? _description;
         private string? _icon;
 
-        public MeteoItemPage()
+        public MeteoItemPage(IParameterService parameterService)
         {
             InitializeComponent();
+            _parameterService = parameterService;
+            _parameterService.SetData(42);
         }
 
         public string? CityName
@@ -141,5 +146,11 @@ namespace MeteoAPP
             base.OnAppearing();
             UpdateUI();
         }
+
+        private async void OnCityLabelTapped(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new BlazorPage());
+        }
+
     }
 }

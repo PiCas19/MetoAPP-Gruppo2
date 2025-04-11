@@ -25,6 +25,7 @@ public static class MauiProgram
 				fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
 			});
 		builder.Services.AddMauiBlazorWebView();
+		builder.Services.AddSingleton<MeteoAPP.Services.IParameterService, MeteoAPP.Services.ParameterService>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

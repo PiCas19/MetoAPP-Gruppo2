@@ -1,7 +1,4 @@
-
-namespace MeteoAPP.Services
-{
-
+namespace MeteoAPP.Services {
     public interface IParameterService
     {
         int GetData();

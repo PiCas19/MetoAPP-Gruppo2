@@ -9,6 +9,5 @@ public partial class AppShell : Shell
 		InitializeComponent();
 		Routing.RegisterRoute(nameof(MeteoItemPage), typeof(MeteoItemPage));
 		Routing.RegisterRoute(nameof(AddItemPage), typeof(AddItemPage));
-		Routing.RegisterRoute(nameof(BlazorPage), typeof(BlazorPage));
 	}
 }

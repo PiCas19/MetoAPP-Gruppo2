@@ -16,9 +16,4 @@
         ContentTemplate="{DataTemplate local:ListMeteoPage}"
         Route="ListMeteoPage"
         IsVisible="True"/>
-    <ShellContent
-        Title="Blazor Page"
-        ContentTemplate="{DataTemplate local:BlazorPage}"
-        Route="BlazorPage"
-        IsVisible="True"/>
 </Shell>
