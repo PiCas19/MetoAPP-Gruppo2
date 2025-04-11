@@ -13,10 +13,6 @@ namespace MeteoAPP
         {
             try
             {
-                await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
-                var token = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
-                await DisplayAlert("OK", token, "Ok");
-                //await Shell.Current.GoToAsync("//ListMeteoPage");
             }
             catch (Exception ex)
             {

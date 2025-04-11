@@ -27,9 +27,9 @@ namespace MeteoAPP
         {
             try
             {
-                await _viewModel.LoadCitiesAsync();                
+                await _viewModel.LoadCitiesAsync();
                 await _viewModel.LoadCurrentLocationAsync();
-                
+
                 if (_viewModel.FilteredCities.Count == 0 && _viewModel.Cities.Count == 0)
                 {
                     await DisplayAlert("Attention", "No cities available", "OK");
@@ -109,13 +109,14 @@ namespace MeteoAPP
             }
         }
 
-         private async void OnSettingsButtonClicked(object sender, EventArgs e)
-         {
+        private async void OnSettingsButtonClicked(object sender, EventArgs e)
+        {
             if (sender is Button button && button.CommandParameter is City city)
             {
                 try
                 {
-                    var settingsViewModel = new NotificationSettingsViewModel(city);
+                    HttpClient httpClient = new HttpClient();
+                    var settingsViewModel = new NotificationSettingsViewModel(city, httpClient);
                     var settingsPage = new NotificationSettingsPage(settingsViewModel);
                     await Navigation.PushModalAsync(settingsPage);
                 }
@@ -124,7 +125,7 @@ namespace MeteoAPP
                     await DisplayAlert("Error", $"Unable to open settings: {ex.Message}", "OK");
                 }
             }
-         }
+        }
 
         private async void OnCurrentLocationTapped(object sender, EventArgs e)
         {
@@ -138,7 +139,7 @@ namespace MeteoAPP
                 if (locationResult.Success)
                 {
                     var weather = await _weatherService.GetWeatherByCoordinatesAsync(
-                        locationResult.Latitude, 
+                        locationResult.Latitude,
                         locationResult.Longitude
                     );
 
