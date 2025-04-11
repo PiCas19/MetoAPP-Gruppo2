@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\TemperatureMonitorBackend.props" />
-</Project>

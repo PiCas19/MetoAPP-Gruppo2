@@ -1,5 +1,6 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Firestore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -19,14 +20,17 @@ namespace BackendProject
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-
+                    // Configura Firestore
                     FirebaseApp.Create(new AppOptions()
                     {
                         Credential = GoogleCredential.FromFile(Path.Combine(AppContext.BaseDirectory, "serviceAccountKey.json"))
                     });
 
-                    services.AddHostedService<TemperatureMonitoringService>();
+                    // Aggiungi il servizio Firestore
+                    services.AddSingleton<FirestoreDb>(FirestoreDb.Create("project_id"));
 
+                    // Aggiungi il servizio TemperatureMonitoringService
+                    services.AddHostedService<TemperatureMonitoringService>();
                 })
                 .ConfigureLogging(logging =>
                 {

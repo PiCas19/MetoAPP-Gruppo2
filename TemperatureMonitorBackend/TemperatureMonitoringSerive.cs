@@ -57,7 +57,7 @@ namespace BackendProject
             return Task.FromResult(32.0);
         }
 
-        // Metodo per inviare la notifica tramite Firebase Admin SDK
+        // Metodo per inviare la notifica tramite Firebase Admian SDK
         private async Task SendTemperatureAlertAsync(string deviceToken, string location, double currentTemp, double tempMax, double tempMin)
         {
             var message = new Message()
