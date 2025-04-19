@@ -2,8 +2,20 @@ using MeteoAPP.Models;
 
 namespace MeteoAPP.Services
 {
+
+    /// <summary>
+    /// Servizio per ottenere la posizione geografica corrente del dispositivo.
+    /// Richiede i permessi di localizzazione e restituisce latitudine e longitudine.
+    /// </summary>
     public class GeoLocationService
     {
+        /// <summary>
+        /// Ottiene la posizione attuale del dispositivo.
+        /// </summary>
+        /// <returns>
+        /// Un oggetto <see cref="GeoLocationResult"/> che indica il successo dell'operazione e, se disponibile,
+        /// le coordinate geografiche (latitudine e longitudine).
+        /// </returns>
         public async Task<GeoLocationResult> GetCurrentLocationAsync()
         {
             try

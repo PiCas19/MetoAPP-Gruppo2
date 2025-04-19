@@ -3,90 +3,56 @@ using MeteoAPP.Models;
 
 namespace MeteoAPP.Services
 {
+    /// <summary>
+    /// Servizio per il recupero dei dati meteo da OpenWeather API.
+    /// Gestisce la configurazione dell'API key e le richieste HTTP verso l'endpoint meteo.
+    /// </summary>
     public class OpenWeatherService
     {
         private readonly HttpClient _httpClient;
-        private string _apiKey;
+        private string _apiKey = "";
 
+
+        /// <summary>
+        /// Costruttore della classe <see cref="OpenWeatherService"/>.
+        /// Inizializza l'istanza di HttpClient.
+        /// </summary>
         public OpenWeatherService()
         {
             _httpClient = new HttpClient();
-            _apiKey = string.Empty;
         }
 
+        /// <summary>
+        /// Inizializza il servizio caricando la chiave API da file di configurazione.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Sollevata se la chiave API non è disponibile.</exception>
         public async Task InitializeAsync()
         {
-            _apiKey = await LoadApiKeyFromConfigAsync();
+            await ConfigService.Instance.InitializeAsync();
+            _apiKey = ConfigService.Instance.GetOpenWeatherApiKey() ?? "";
+
             if (string.IsNullOrEmpty(_apiKey))
-            {
-                throw new InvalidOperationException("The API key was not found in the configuration file.");
-            }
+                throw new InvalidOperationException("API Key non trovata nel config.json");
         }
 
-        private async Task<string> LoadApiKeyFromConfigAsync()
-        {
-            try
-            {
-                var assembly = GetType().Assembly;
-                var resourceName = assembly.GetManifestResourceNames()
-                    .FirstOrDefault(rn => rn.EndsWith("config.json"));
-
-                if (resourceName != null)
-                {
-                    using var stream = assembly.GetManifestResourceStream(resourceName);
-                    if (stream != null)
-                    {
-                        using var reader = new StreamReader(stream);
-                        var jsonContent = await reader.ReadToEndAsync();
-                        var config = JsonConvert.DeserializeObject<Config>(jsonContent);
-                        return config?.OpenWeatherApiKey ?? string.Empty;
-                    }
-                }
-                var configFilePath = Path.Combine(FileSystem.AppDataDirectory, "config.json");
-                
-                var directory = Path.GetDirectoryName(configFilePath);
-                if (!string.IsNullOrEmpty(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
-
-                if (!File.Exists(configFilePath))
-                {
-                    await File.WriteAllTextAsync(configFilePath, JsonConvert.SerializeObject(new Config()));
-                }
-
-                var fileContent = await File.ReadAllTextAsync(configFilePath);
-                var fileConfig = JsonConvert.DeserializeObject<Config>(fileContent);
-                
-                return fileConfig?.OpenWeatherApiKey ?? string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading API key: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                return string.Empty;
-            }
-        }
-        
+        /// <summary>
+        /// Recupera i dati meteo per una data posizione geografica.
+        /// </summary>
+        /// <param name="latitude">Latitudine della località.</param>
+        /// <param name="longitude">Longitudine della località.</param>
+        /// <returns>Un oggetto <see cref="WeatherData"/> contenente le informazioni meteo, oppure <c>null</c> in caso di errore.</returns>
         public async Task<WeatherData?> GetWeatherByCoordinatesAsync(double latitude, double longitude)
         {
             try
             {
                 var url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={_apiKey}&units=metric";
-                
                 var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
-                
+
                 var json = await response.Content.ReadAsStringAsync();
                 var weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(json);
 
-                if (weatherResponse == null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Error: No weather data received.");
-                    return null;
-                }
-
-                return new WeatherData
+                return weatherResponse == null ? null : new WeatherData
                 {
                     Location = weatherResponse.Name ?? "N/A",
                     Description = weatherResponse.Weather?[0]?.Description ?? "N/A",
@@ -94,11 +60,9 @@ namespace MeteoAPP.Services
                     Temperature = weatherResponse.Main?.Temp ?? 0,
                     TemperatureMin = weatherResponse.Main?.TempMin ?? 0,
                     TemperatureMax = weatherResponse.Main?.TempMax ?? 0,
-
                     WindSpeedKmh = (weatherResponse.Wind?.Speed ?? 0) * 3.6,
                     RainChancePercent = weatherResponse.Clouds?.All ?? 0,
                     PressureHpa = weatherResponse.Main?.Pressure ?? 0,
-
                     MorningTemp = (weatherResponse.Main?.TempMin ?? 0) + 0.5,
                     AfternoonTemp = weatherResponse.Main?.Temp ?? 0,
                     EveningTemp = (weatherResponse.Main?.TempMax ?? 0) - 0.5,
@@ -107,7 +71,6 @@ namespace MeteoAPP.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in GetWeatherByCoordinatesAsync: {ex.Message}");
                 return null;
             }
         }

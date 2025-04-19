@@ -4,12 +4,19 @@ using System.Diagnostics;
 
 namespace MeteoAPP.Services
 {
+    /// <summary>
+    /// Gestisce la connessione e le operazioni sul database locale SQLite per la persistenza delle città.
+    /// </summary>
     public class DatabaseService
     {
         private readonly SQLiteAsyncConnection _databaseConnection;
         private const string SeededKey = "DatabaseSeeded";
         private bool _isInitialized = false;
 
+        /// <summary>
+        /// Costruttore della classe <see cref="DatabaseService"/>.
+        /// Inizializza la connessione al database SQLite.
+        /// </summary>
         public DatabaseService()
         {
             try 
@@ -41,6 +48,9 @@ namespace MeteoAPP.Services
             }
         }
 
+        /// <summary>
+        /// Inizializza il database creando la tabella e effettuando il seed iniziale se necessario.
+        /// </summary>
         public async Task InitializeAsync()
         {
             if (!_isInitialized)
@@ -48,8 +58,6 @@ namespace MeteoAPP.Services
                 try
                 {
                     await _databaseConnection.CreateTableAsync<City>();
-
-                    // 👉 PRIMA verifichiamo se ci sono dati già sincronizzati da Appwrite
                     var existingCities = await _databaseConnection.Table<City>().ToListAsync();
 
                     if (!existingCities.Any())
@@ -76,8 +84,9 @@ namespace MeteoAPP.Services
                 }
             }
         }
-
-
+        /// <summary>
+        /// Popola il database con un set di città iniziali.
+        /// </summary>
         private async Task SeedDatabaseAsync()
         {
             var cities = new List<City>
@@ -99,13 +108,21 @@ namespace MeteoAPP.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Aggiunge una nuova città al database.
+        /// </summary>
+        /// <param name="city">Oggetto <see cref="City"/> da inserire.</param>
+        /// <returns>ID della riga inserita.</returns>
         public async Task<int> AddCityAsync(City city)
         {
             await InitializeAsync();
             return await _databaseConnection.InsertAsync(city);
         }
 
+        /// <summary>
+        /// Recupera tutte le città salvate nel database.
+        /// </summary>
+        /// <returns>Lista di oggetti <see cref="City"/>.</returns>
         public async Task<List<City>> GetAllCityAsync()
         {
             await InitializeAsync();
@@ -138,19 +155,32 @@ namespace MeteoAPP.Services
                 return new List<City>();
             }
         }
-
+        /// <summary>
+        /// Recupera una città specifica tramite il suo ID.
+        /// </summary>
+        /// <param name="id">ID univoco della città.</param>
+        /// <returns>Oggetto <see cref="City"/> corrispondente o null se non trovato.</returns>
         public async Task<City> GetCityByIdAsync(long id)
         {
             await InitializeAsync();
             return await _databaseConnection.Table<City>().FirstOrDefaultAsync(c => c.Id == id);
         }
-
+        /// <summary>
+        /// Aggiorna una città esistente nel database.
+        /// </summary>
+        /// <param name="city">Oggetto <see cref="City"/> con i dati aggiornati.</param>
+        /// <returns>Numero di righe interessate.</returns>
         public async Task<int> UpdateCityAsync(City city)
         {
             await InitializeAsync();
             return await _databaseConnection.UpdateAsync(city);
         }
 
+        /// <summary>
+        /// Elimina una città dal database utilizzando il suo ID.
+        /// </summary>
+        /// <param name="id">ID della città da eliminare.</param>
+        /// <returns>Numero di righe eliminate.</returns>
         public async Task<int> DeleteCityAsync(long id)
         {
             await InitializeAsync();

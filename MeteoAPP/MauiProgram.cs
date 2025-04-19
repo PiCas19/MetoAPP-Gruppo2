@@ -11,8 +11,18 @@ using Plugin.Firebase.Core.Platforms.iOS;
 using Plugin.Firebase.Core.Platforms.Android;
 #endif
 
+/// <summary>
+/// Classe statica responsabile dell'inizializzazione dell'app .NET MAUI.
+/// Configura servizi, font, Firebase e l'ambiente Blazor.
+/// </summary>
 public static class MauiProgram
 {
+
+	/// <summary>
+    /// Punto di ingresso per la creazione dell'applicazione MAUI.
+    /// Configura dipendenze, servizi Firebase, Blazor, logging e font.
+    /// </summary>
+    /// <returns>Istanza configurata di <see cref="MauiApp"/> pronta all'uso.</returns>
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
@@ -37,7 +47,12 @@ public static class MauiProgram
 		return builder.Build();
 	}
 
-
+	/// <summary>
+    /// Metodo di estensione che registra e inizializza i servizi Firebase.
+    /// Supporta sia Android che iOS tramite eventi specifici del ciclo di vita.
+    /// </summary>
+    /// <param name="builder">Il builder MAUI da configurare.</param>
+    /// <returns>Il builder aggiornato con il supporto Firebase.</returns>
 	private static MauiAppBuilder RegisterFirebaseServices(this MauiAppBuilder builder)
 	{
 		builder.ConfigureLifecycleEvents(events =>

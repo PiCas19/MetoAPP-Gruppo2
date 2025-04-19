@@ -7,6 +7,10 @@ using MeteoAPP;
 
 namespace MeteoApp;
 
+/// <summary>
+/// Pagina per aggiungere una nuova città alla lista dell’utente, tramite geolocalizzazione o ricerca.
+/// Integra una mappa Leaflet.js via WebView per la selezione interattiva.
+/// </summary>
 [QueryProperty("ViewModel", "ViewModel")]
 [QueryProperty ("GeoLocationService", "GeoLocationService")]
 public partial class AddItemPage : ContentPage
@@ -15,6 +19,11 @@ public partial class AddItemPage : ContentPage
     private readonly AddItemViewModel _addItemViewModel;
     private readonly GeoLocationService _locationService;
 
+    /// <summary>
+    /// Costruttore della pagina AddItem.
+    /// </summary>
+    /// <param name="viewModel">ViewModel principale della lista meteo.</param>
+    /// <param name="geoLocationService">Servizio di geolocalizzazione.</param>
     public AddItemPage(MeteoListViewModel viewModel, GeoLocationService geoLocationService )
     {
         InitializeComponent();
@@ -35,6 +44,9 @@ public partial class AddItemPage : ContentPage
         _ = RequestLocationPermissionAndGetLocation();
     }
 
+    /// <summary>
+    /// Richiede i permessi di localizzazione e imposta la mappa alla posizione attuale.
+    /// </summary>
     private async Task RequestLocationPermissionAndGetLocation()
     {
         try
@@ -73,6 +85,11 @@ public partial class AddItemPage : ContentPage
             LoadingIndicator.IsRunning = false;
         }
     }
+    /// <summary>
+    /// Gestisce la comunicazione JS→C# per aggiornare la posizione selezionata sulla mappa.
+    /// </summary>
+    /// <param name="sender">Oggetto mittente.</param>
+    /// <param name="e">Argomenti di navigazione Web.</param>
     private async void WebView_Navigating(object sender, WebNavigatingEventArgs e)
     {
         if (e.Url.StartsWith("js://update-location/"))
@@ -103,7 +120,11 @@ public partial class AddItemPage : ContentPage
             }
         }
     }
-
+    /// <summary>
+    /// Gestisce il click sul pulsante di ricerca città.
+    /// </summary>
+    /// <param name="sender">Oggetto mittente.</param>
+    /// <param name="e">EventArgs.</param>
     private async void OnSearchButtonClicked(object sender, EventArgs e)
     {
         string searchText = CitySearchEntry.Text;
@@ -146,7 +167,11 @@ public partial class AddItemPage : ContentPage
             LoadingIndicator.IsRunning = false;
         }
     }
-
+    /// <summary>
+    /// Salva la città selezionata e la sincronizza su Appwrite.
+    /// </summary>
+    /// <param name="sender">Oggetto mittente.</param>
+    /// <param name="e">EventArgs.</param>
     private async void OnSaveButtonClicked(object sender, EventArgs e)
     {
         var city = new City
@@ -172,7 +197,11 @@ public partial class AddItemPage : ContentPage
         }
         await Navigation.PopAsync();
     }
-
+    /// <summary>
+    /// Callback al completamento del caricamento WebView (mappa).
+    /// </summary>
+    /// <param name="sender">Oggetto mittente.</param>
+    /// <param name="e">Risultato navigazione web.</param>
     private void OnWebViewNavigated(object sender, WebNavigatedEventArgs e)
     {
         if (e.Result != WebNavigationResult.Success)

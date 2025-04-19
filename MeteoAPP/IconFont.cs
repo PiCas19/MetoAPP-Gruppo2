@@ -1,5 +1,9 @@
 namespace MeteoAPP.Utilities
 {
+    /// <summary>
+    /// Classe statica che contiene i codici delle icone utilizzate nell'app tramite font personalizzati (MaterialIcons).
+    /// Ogni costante rappresenta un'icona identificata da un carattere Unicode.
+    /// </summary>
     static class IconFont
     {
         public const string Icon1 = "\u0030";

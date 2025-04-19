@@ -14,19 +14,19 @@ using BackendProject;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔐 Percorso alla chiave Firebase
+// Percorso alla chiave Firebase
 var keyPath = Path.Combine(AppContext.BaseDirectory, "serviceAccountKey.json");
 
-// 🔐 Crea credenziali da file
+// Crea credenziali da file
 var credential = GoogleCredential.FromFile(keyPath);
 
-// 🔐 Inizializza Firebase
+// Inizializza Firebase
 FirebaseApp.Create(new AppOptions
 {
     Credential = credential
 });
 
-// 🔍 Ottieni projectId dal JSON
+// Ottieni projectId dal JSON
 string json = File.ReadAllText(keyPath);
 using var doc = JsonDocument.Parse(json);
 string? projectId = doc.RootElement.GetProperty("project_id").GetString();
@@ -34,34 +34,34 @@ string? projectId = doc.RootElement.GetProperty("project_id").GetString();
 if (string.IsNullOrEmpty(projectId))
     throw new InvalidOperationException("project_id non trovato nel file serviceAccountKey.json");
 
-// 🔧 Crea Firestore client con le credenziali
+// Crea Firestore client con le credenziali
 var firestoreClient = new FirestoreClientBuilder
 {
     Credential = credential
 }.Build();
 
-// 🔧 Istanzia FirestoreDb
+// Istanzia FirestoreDb
 var db = FirestoreDb.Create(projectId, firestoreClient);
 
-// ✅ Servizi
+// Servizi
 builder.Services.AddSingleton(db);
 builder.Services.AddHostedService<TemperatureMonitoringService>();
 builder.Services.AddControllers();
 
-// ✅ Swagger
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Temperature Monitor API", Version = "v1" });
 });
 
-// ✅ Logging
+// Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-// ✅ Middleware pipeline
+// Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

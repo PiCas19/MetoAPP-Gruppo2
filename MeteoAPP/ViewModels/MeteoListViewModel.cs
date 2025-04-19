@@ -6,6 +6,10 @@ using MeteoAPP.Services;
 
 namespace MeteoAPP.ViewModels
 {
+    /// <summary>
+    /// ViewModel che gestisce la logica per la lista delle città monitorate e il meteo associato.
+    /// Integra ricerca, eliminazione, aggiunta e sincronizzazione delle città.
+    /// </summary>
     public class MeteoListViewModel : BaseViewModel
     {
         private readonly DatabaseService _databaseService;
@@ -16,7 +20,9 @@ namespace MeteoAPP.ViewModels
         private bool _isLoading;
         private string? _currentCityName;
         private string _searchText;
-
+        /// <summary>
+        /// Lista completa delle città salvate localmente.
+        /// </summary>
         public ObservableCollection<City> Cities
         {
             get => _cities;
@@ -27,7 +33,9 @@ namespace MeteoAPP.ViewModels
                 UpdateFilteredCities(); 
             }
         }
-
+        /// <summary>
+        /// Lista filtrata dinamicamente in base al testo di ricerca.
+        /// </summary>
         public ObservableCollection<City> FilteredCities
         {
             get => _filteredCities;
@@ -37,7 +45,9 @@ namespace MeteoAPP.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// Indica se è in corso un'operazione di caricamento.
+        /// </summary>
         public bool IsLoading
         {
             get => _isLoading;
@@ -47,7 +57,9 @@ namespace MeteoAPP.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// Nome della città corrente ottenuto tramite geolocalizzazione.
+        /// </summary>
         public string CurrentCityName
         {
             get => _currentCityName!;
@@ -57,7 +69,9 @@ namespace MeteoAPP.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// Testo inserito nella barra di ricerca per filtrare le città.
+        /// </summary>
         public string SearchText
         {
             get => _searchText;
@@ -68,10 +82,20 @@ namespace MeteoAPP.ViewModels
                 UpdateFilteredCities(); // Aggiorna la lista filtrata quando cambia il testo di ricerca
             }
         }
-
+        /// <summary>
+        /// Comando per eliminare una città dalla lista.
+        /// </summary>
         public ICommand DeleteCityCommand { get; }
+        /// <summary>
+        /// Comando per ricaricare la lista delle città.
+        /// </summary>
         public ICommand RefreshCommand { get; }
 
+        /// <summary>
+        /// Costruttore del ViewModel.
+        /// </summary>
+        /// <param name="locationService">Servizio per ottenere la posizione geografica.</param>
+        /// <param name="weatherService">Servizio per accedere ai dati meteo.</param>
         public MeteoListViewModel(GeoLocationService locationService, OpenWeatherService weatherService)
         {
             _locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
@@ -86,6 +110,9 @@ namespace MeteoAPP.ViewModels
             RefreshCommand = new Command(async () => await RefreshCitiesAsync());
         }
 
+        /// <summary>
+        /// Aggiorna la lista delle città filtrate in base al testo inserito.
+        /// </summary>
         private void UpdateFilteredCities()
         {
             if (string.IsNullOrWhiteSpace(SearchText))
@@ -101,6 +128,10 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        /// <summary>
+        /// Mostra conferma all’utente prima di eliminare una città.
+        /// </summary>
+        /// <param name="city">La città da eliminare.</param>
         private async Task DeleteCityAsync(City city)
         {
             if (city == null) return;
@@ -127,7 +158,9 @@ namespace MeteoAPP.ViewModels
                     "OK");
             }
         }
-
+        /// <summary>
+        /// Carica tutte le città dal database locale.
+        /// </summary>
         public async Task LoadCitiesAsync()
         {
             try
@@ -155,11 +188,18 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        /// <summary>
+        /// Ricarica le città dal database.
+        /// </summary>
         private async Task RefreshCitiesAsync()
         {
             await LoadCitiesAsync();
         }
 
+        /// <summary>
+        /// Aggiunge una nuova città alla lista e la salva localmente.
+        /// </summary>
+        /// <param name="city">La città da aggiungere.</param>
         public async Task AddCityAsync(City city)
         {
             try
@@ -186,6 +226,10 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        /// <summary>
+        /// Rimuove una città dalla lista e la elimina anche da Appwrite.
+        /// </summary>
+        /// <param name="city">La città da rimuovere.</param>
         public async Task RemoveCityAsync(City city)
         {
             if (city != null)
@@ -210,7 +254,10 @@ namespace MeteoAPP.ViewModels
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Carica e aggiorna il nome della città corrente tramite GPS.
+        /// </summary>
         public async Task LoadCurrentLocationAsync()
         {
             try

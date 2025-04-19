@@ -2,9 +2,14 @@ using System.Text;
 using System.Text.Json;
 using MeteoAPP.Models;
 using Plugin.Firebase.CloudMessaging;
+using MeteoAPP.Services;
 
 namespace MeteoAPP.ViewModels
 {
+    /// <summary>
+    /// ViewModel per la gestione delle impostazioni di notifica personalizzate per ciascuna città.
+    /// Include soglie di temperatura e preferenze utente.
+    /// </summary>
     public class NotificationSettingsViewModel : BaseViewModel
     {
         private City? _city;
@@ -14,24 +19,36 @@ namespace MeteoAPP.ViewModels
         private readonly HttpClient _httpClient;
         private string _baseApiUrl = "";
 
+        /// <summary>
+        /// Città per cui configurare le notifiche.
+        /// </summary>
         public City City
         {
             get => _city ?? throw new InvalidOperationException("City cannot be null");
             set => SetProperty(ref _city, value);
         }
 
+        /// <summary>
+        /// Soglia massima di temperatura impostata dall’utente.
+        /// </summary>
         public double HighTemperatureThreshold
         {
             get => _highTemperatureThreshold;
             set => SetProperty(ref _highTemperatureThreshold, value);
         }
 
+        /// <summary>
+        /// Soglia minima di temperatura impostata dall’utente.
+        /// </summary>
         public double LowTemperatureThreshold
         {
             get => _lowTemperatureThreshold;
             set => SetProperty(ref _lowTemperatureThreshold, value);
         }
 
+        /// <summary>
+        /// Indica se le notifiche sono abilitate per la città corrente.
+        /// </summary>
         public bool IsNotificationEnabled
         {
             get => _isNotificationEnabled;
@@ -44,41 +61,49 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        /// <summary>
+        /// Costruttore della ViewModel.
+        /// </summary>
+        /// <param name="city">Città per la quale gestire le notifiche.</param>
+        /// <param name="httpClient">Istanza HttpClient per le richieste API.</param>
         public NotificationSettingsViewModel(City city, HttpClient httpClient)
         {
             City = city ?? throw new ArgumentNullException(nameof(city));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _ = LoadBaseUrlAsync();
-            LoadSettings();
         }
 
-        private async Task LoadBaseUrlAsync()
+        /// <summary>
+        /// Metodo asincrono di inizializzazione. Deve essere chiamato esternamente dopo la creazione della ViewModel.
+        /// </summary>
+        public async Task InitializeAsync()
         {
-            try
+            await ConfigService.Instance.InitializeAsync();
+            _baseApiUrl = ConfigService.Instance.GetBaseApiUrl() ?? "";
+
+            if (string.IsNullOrEmpty(_baseApiUrl))
             {
-                var path = Path.Combine(FileSystem.AppDataDirectory, "config.json");
-                var json = await File.ReadAllTextAsync(path);
-                var config = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                _baseApiUrl = config?["NotificationSettingsBaseUrl"]?.TrimEnd('/') ?? "";
+                Console.WriteLine("⚠️ Base URL non trovato o vuoto.");
+                return;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Errore nel caricamento del base URL: " + ex.Message);
-            }
+
+            await LoadSettingsAsync();
         }
 
+        /// <summary>
+        /// Genera una chiave univoca per le preferenze di notifica basata su token e località.
+        /// </summary>
         private string GeneratePreferenceKey(string token, string location)
         {
             return $"notifications_enabled_{token}_{location}";
         }
 
-        private async void LoadSettings()
+        /// <summary>
+        /// Carica le impostazioni salvate dal server per la città corrente.
+        /// </summary>
+        private async Task LoadSettingsAsync()
         {
             try
             {
-                if (string.IsNullOrEmpty(_baseApiUrl))
-                    await LoadBaseUrlAsync();
-
                 string token = "";
                 try
                 {
@@ -103,6 +128,7 @@ namespace MeteoAPP.ViewModels
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     var settingsList = JsonSerializer.Deserialize<List<UserNotificationSettings>>(content);
+
                     if (settingsList?.Count > 0)
                     {
                         var settings = settingsList[0];
@@ -119,10 +145,13 @@ namespace MeteoAPP.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Errore LoadSettings(): " + ex.Message);
+                Console.WriteLine("Errore LoadSettingsAsync(): " + ex.Message);
             }
         }
 
+        /// <summary>
+        /// Salva la preferenza di notifica localmente per il dispositivo corrente.
+        /// </summary>
         private void SaveNotificationPreference()
         {
             try
@@ -138,6 +167,9 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        /// <summary>
+        /// Salva o aggiorna le impostazioni dell’utente lato server.
+        /// </summary>
         public async Task SaveSettingsAsync()
         {
             try
@@ -172,7 +204,14 @@ namespace MeteoAPP.ViewModels
                 var content = new StringContent(JsonSerializer.Serialize(settingsList), Encoding.UTF8, "application/json");
 
                 if (string.IsNullOrEmpty(_baseApiUrl))
-                    await LoadBaseUrlAsync();
+                {
+                    _baseApiUrl = ConfigService.Instance.GetBaseApiUrl() ?? "";
+                    if (string.IsNullOrEmpty(_baseApiUrl))
+                    {
+                        Console.WriteLine("⚠️ Base URL mancante, impossibile salvare le impostazioni.");
+                        return;
+                    }
+                }
 
                 var endpoint = $"{_baseApiUrl}/api/NotificationSettings";
                 var response = await _httpClient.PostAsync(endpoint, content);
@@ -197,5 +236,6 @@ namespace MeteoAPP.ViewModels
                 throw;
             }
         }
+
     }
 }

@@ -3,13 +3,19 @@ using MeteoAPP.Models;
 
 namespace MeteoAPP.ViewModels
 {
+    /// <summary>
+    /// ViewModel per l'aggiunta di una nuova città tramite geolocalizzazione o ricerca per nome.
+    /// Include logica per ottenere nome città da coordinate e viceversa.
+    /// </summary>
     public class AddItemViewModel : BaseViewModel
     {
         private string cityName = string.Empty;
         private string countryName = string.Empty;
         private double latitude;
         private double longitude;
-
+        /// <summary>
+        /// Nome della città selezionata.
+        /// </summary>
         public string CityName
         {
             get => cityName;
@@ -19,7 +25,9 @@ namespace MeteoAPP.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// Nome del paese associato alla città.
+        /// </summary>
         public string CountryName
         {
             get => countryName;
@@ -29,7 +37,9 @@ namespace MeteoAPP.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// Latitudine della città.
+        /// </summary>
         public double Latitude
         {
             get => latitude;
@@ -39,7 +49,9 @@ namespace MeteoAPP.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// Longitudine della città.
+        /// </summary>
         public double Longitude
         {
             get => longitude;
@@ -50,6 +62,12 @@ namespace MeteoAPP.ViewModels
             }
         }
 
+        /// <summary>
+        /// Ottiene il nome della località (città e paese) da coordinate geografiche utilizzando Nominatim.
+        /// </summary>
+        /// <param name="latitude">Latitudine della posizione.</param>
+        /// <param name="longitude">Longitudine della posizione.</param>
+        /// <returns>Il nome della città se trovato, altrimenti "Position not found".</returns>
         public async Task<string> GetLocationNameAsync(double latitude, double longitude)
         {
             string url = $"https://nominatim.openstreetmap.org/reverse?format=json&lat={latitude}&lon={longitude}";
@@ -89,6 +107,13 @@ namespace MeteoAPP.ViewModels
             return "Position not found";
         }
 
+        /// <summary>
+        /// Ottiene le coordinate geografiche da un nome città usando Nominatim API.
+        /// </summary>
+        /// <param name="city">Nome della città da cercare.</param>
+        /// <returns>
+        /// Oggetto <see cref="GeoLocation"/> contenente nome, latitudine e longitudine, oppure null se la città non è trovata.
+        /// </returns>
         public async Task<GeoLocation?> GetCoordinatesFromCityAsync(string city)
         {
             string encodedCity = Uri.EscapeDataString(city.Replace(" ", "+"));

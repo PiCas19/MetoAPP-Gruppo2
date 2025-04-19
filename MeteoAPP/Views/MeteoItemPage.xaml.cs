@@ -4,6 +4,9 @@ using MeteoAPP.Services;
 
 namespace MeteoAPP
 {
+    /// <summary>
+    /// Pagina che visualizza i dettagli meteo per una città selezionata, con binding tramite query parameters.
+    /// </summary>
     [QueryProperty(nameof(CityName), "CityName")]
     [QueryProperty(nameof(Temperature), "Temperature")]
     [QueryProperty(nameof(TemperatureMin), "TemperatureMin")]
@@ -35,12 +38,19 @@ namespace MeteoAPP
         private string? _eveningTemp;
         private string? _nightTemp;
 
+        /// <summary>
+        /// Inizializza la pagina con il servizio per il passaggio di dati globali.
+        /// </summary>
+        /// <param name="parameterService">Servizio per il passaggio dei parametri meteo.</param>
         public MeteoItemPage(IParameterService parameterService)
         {
             InitializeComponent();
             _parameterService = parameterService;
         }
 
+        /// <summary>
+        /// Nome della città selezionata.
+        /// </summary>
         public string? CityName
         {
             get => _cityName;
@@ -51,6 +61,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Temperatura attuale.
+        /// </summary>
         public string? Temperature
         {
             get => _temperature;
@@ -61,6 +74,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Temperatura minima.
+        /// </summary>
         public string? TemperatureMin
         {
             get => _temperatureMin;
@@ -71,6 +87,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Temperatura massima.
+        /// </summary>
         public string? TemperatureMax
         {
             get => _temperatureMax;
@@ -81,6 +100,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Descrizione delle condizioni meteo (es. "nuvoloso").
+        /// </summary>
         public string? Description
         {
             get => _description;
@@ -91,6 +113,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Codice dell'icona meteo OpenWeatherMap.
+        /// </summary>
         public string? Icon
         {
             get => _icon;
@@ -100,6 +125,10 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+
+        /// <summary>
+        /// Velocità del vento in km/h.
+        /// </summary>
         public string? WindSpeed
         {
             get => _windSpeed;
@@ -109,6 +138,10 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+
+        /// <summary>
+        /// Probabilità di pioggia in percentuale.
+        /// </summary>
         public string? RainChance
         {
             get => _rainChance;
@@ -118,6 +151,10 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+
+        /// <summary>
+        /// Pressione atmosferica in hPa.
+        /// </summary>
         public string? Pressure
         {
             get => _pressure;
@@ -127,6 +164,10 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+
+        /// <summary>
+        /// Temperatura del mattino.
+        /// </summary>
         public string? MorningTemp
         {
             get => _morningTemp;
@@ -136,6 +177,10 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+
+        /// <summary>
+        /// Temperatura del pomeriggio.
+        /// </summary>
         public string? AfternoonTemp
         {
             get => _afternoonTemp;
@@ -145,6 +190,10 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+
+        /// <summary>
+        /// Temperatura della sera.
+        /// </summary>
         public string? EveningTemp
         {
             get => _eveningTemp;
@@ -155,6 +204,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Temperatura della notte.
+        /// </summary>
         public string? NightTemp
         {
             get => _nightTemp;
@@ -165,6 +217,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Aggiorna la UI in base ai dati meteo correnti.
+        /// </summary>
         private void UpdateUI()
         {
             try
@@ -189,6 +244,9 @@ namespace MeteoAPP
             }
         }
 
+        /// <summary>
+        /// Cambia dinamicamente lo sfondo della pagina in base alla descrizione meteo.
+        /// </summary>
         private void UpdateBackground()
         {
             if (_description == null) return;
@@ -218,6 +276,10 @@ namespace MeteoAPP
             Background = backgroundBrush;
         }
 
+        
+        /// <summary>
+        /// Evento chiamato alla visualizzazione della pagina. Sincronizza i dati col parametro service.
+        /// </summary>
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -240,6 +302,11 @@ namespace MeteoAPP
             });
         }
 
+        /// <summary>
+        /// Naviga alla pagina Blazor (grafici) quando si clicca sul nome della città.
+        /// </summary>
+        /// <param name="sender">L'oggetto che ha generato l'evento (in questo caso un'etichetta tappata).</param>
+        /// <param name="e">I dati dell'evento di tap associato all'interazione utente.</param>
         private async void OnCityLabelTapped(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new BlazorPage());
