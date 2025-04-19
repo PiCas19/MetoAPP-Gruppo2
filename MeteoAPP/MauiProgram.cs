@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 using Microsoft.AspNetCore.Components.WebView.Maui;
+using MeteoAPP.Services;
 
 namespace MeteoAPP;
 
@@ -26,6 +27,7 @@ public static class MauiProgram
 			});
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddSingleton<MeteoAPP.Services.IParameterService, MeteoAPP.Services.ParameterService>();
+		builder.Services.AddSingleton<AppwriteSyncService>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

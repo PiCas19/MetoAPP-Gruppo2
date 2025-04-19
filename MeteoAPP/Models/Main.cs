@@ -11,5 +11,8 @@ namespace MeteoAPP.Models
 
         [JsonProperty("temp_max")]
         public double TempMax { get; set; }
+
+        [JsonProperty("pressure")]
+        public double Pressure { get; set; }
     }
 }

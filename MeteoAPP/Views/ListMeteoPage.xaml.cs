@@ -78,7 +78,14 @@ namespace MeteoAPP
                         { "TemperatureMin", weather.TemperatureMin.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) },
                         { "TemperatureMax", weather.TemperatureMax.ToString("F1", System.Globalization.CultureInfo.InvariantCulture) },
                         { "Description", weather.Description ?? "N/A" },
-                        { "Icon", weather.IconCode ?? "01d" }
+                        { "Icon", weather.IconCode ?? "01d" },
+                        { "WindSpeed", weather.WindSpeedKmh.ToString("F0") },
+                        { "RainChance", weather.RainChancePercent.ToString("F0") },
+                        { "Pressure", weather.PressureHpa.ToString("F0") },
+                        { "MorningTemp", weather.MorningTemp.ToString("F0") },
+                        { "AfternoonTemp", weather.AfternoonTemp.ToString("F0") },
+                        { "EveningTemp", weather.EveningTemp.ToString("F0") },
+                        { "NightTemp", weather.NightTemp.ToString("F0") }
                     };
 
                     await Shell.Current.GoToAsync("MeteoItemPage", navigationParameter);

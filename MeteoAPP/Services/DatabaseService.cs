@@ -48,14 +48,20 @@ namespace MeteoAPP.Services
                 try
                 {
                     await _databaseConnection.CreateTableAsync<City>();
-                    bool isSeeded = Preferences.Get(SeededKey, false);
-                    if (!isSeeded)
+
+                    // 👉 PRIMA verifichiamo se ci sono dati già sincronizzati da Appwrite
+                    var existingCities = await _databaseConnection.Table<City>().ToListAsync();
+
+                    if (!existingCities.Any())
                     {
-                        await SeedDatabaseAsync();
-                        Preferences.Set(SeededKey, true);
+                        bool isSeeded = Preferences.Get(SeededKey, false);
+                        if (!isSeeded)
+                        {
+                            await SeedDatabaseAsync();
+                            Preferences.Set(SeededKey, true);
+                        }
                     }
 
-                    var existingCities = await _databaseConnection.Table<City>().ToListAsync();
                     _isInitialized = true;
                 }
                 catch (Exception ex)
@@ -70,6 +76,7 @@ namespace MeteoAPP.Services
                 }
             }
         }
+
 
         private async Task SeedDatabaseAsync()
         {

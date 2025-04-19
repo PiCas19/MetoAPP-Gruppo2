@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MeteoAPP.Models;
 using MeteoAPP.Services;
 
 namespace MeteoAPP
@@ -9,7 +10,13 @@ namespace MeteoAPP
     [QueryProperty(nameof(TemperatureMax), "TemperatureMax")]
     [QueryProperty(nameof(Description), "Description")]
     [QueryProperty(nameof(Icon), "Icon")]
-
+    [QueryProperty(nameof(WindSpeed), "WindSpeed")]
+    [QueryProperty(nameof(RainChance), "RainChance")]
+    [QueryProperty(nameof(Pressure), "Pressure")]
+    [QueryProperty(nameof(MorningTemp), "MorningTemp")]
+    [QueryProperty(nameof(AfternoonTemp), "AfternoonTemp")]
+    [QueryProperty(nameof(EveningTemp), "EveningTemp")]
+    [QueryProperty(nameof(NightTemp), "NightTemp")]
     public partial class MeteoItemPage : ContentPage
     {
 
@@ -20,12 +27,18 @@ namespace MeteoAPP
         private string? _temperatureMax;
         private string? _description;
         private string? _icon;
+        private string? _windSpeed;
+        private string? _rainChance;
+        private string? _pressure;
+        private string? _morningTemp;
+        private string? _afternoonTemp;
+        private string? _eveningTemp;
+        private string? _nightTemp;
 
         public MeteoItemPage(IParameterService parameterService)
         {
             InitializeComponent();
             _parameterService = parameterService;
-            _parameterService.SetData(42);
         }
 
         public string? CityName
@@ -87,6 +100,70 @@ namespace MeteoAPP
                 UpdateUI();
             }
         }
+        public string? WindSpeed
+        {
+            get => _windSpeed;
+            set
+            {
+                _windSpeed = value;
+                UpdateUI();
+            }
+        }
+        public string? RainChance
+        {
+            get => _rainChance;
+            set
+            {
+                _rainChance = value;
+                UpdateUI();
+            }
+        }
+        public string? Pressure
+        {
+            get => _pressure;
+            set
+            {
+                _pressure = value;
+                UpdateUI();
+            }
+        }
+        public string? MorningTemp
+        {
+            get => _morningTemp;
+            set
+            {
+                _morningTemp = value;
+                UpdateUI();
+            }
+        }
+        public string? AfternoonTemp
+        {
+            get => _afternoonTemp;
+            set
+            {
+                _afternoonTemp = value;
+                UpdateUI();
+            }
+        }
+        public string? EveningTemp
+        {
+            get => _eveningTemp;
+            set
+            {
+                _eveningTemp = value;
+                UpdateUI();
+            }
+        }
+
+        public string? NightTemp
+        {
+            get => _nightTemp;
+            set
+            {
+                _nightTemp = value;
+                UpdateUI();
+            }
+        }
 
         private void UpdateUI()
         {
@@ -145,6 +222,22 @@ namespace MeteoAPP
         {
             base.OnAppearing();
             UpdateUI();
+             _parameterService.SetData(new WeatherData
+            {
+                Location = _cityName ?? "N/A",
+                Description = _description ?? "N/A",
+                IconCode = _icon ?? "01d",
+                Temperature = double.TryParse(_temperature, out var temp) ? temp : 0,
+                TemperatureMin = double.TryParse(_temperatureMin, out var tempMin) ? tempMin : 0,
+                TemperatureMax = double.TryParse(_temperatureMax, out var tempMax) ? tempMax : 0,
+                WindSpeedKmh = double.TryParse(_windSpeed, out var wind) ? wind : 0,
+                RainChancePercent = double.TryParse(_rainChance, out var rain) ? rain : 0,
+                PressureHpa = double.TryParse(_pressure, out var pressure) ? pressure : 0,
+                MorningTemp = double.TryParse(_morningTemp, out var m) ? m : 0,
+                AfternoonTemp = double.TryParse(_afternoonTemp, out var a) ? a : 0,
+                EveningTemp = double.TryParse(_eveningTemp, out var e) ? e : 0,
+                NightTemp = double.TryParse(_nightTemp, out var n) ? n : 0
+            });
         }
 
         private async void OnCityLabelTapped(object sender, EventArgs e)

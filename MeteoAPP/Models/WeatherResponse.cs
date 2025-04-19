@@ -11,5 +11,11 @@ namespace MeteoAPP.Models
 
         [JsonProperty("main")]
         public Main? Main { get; set; }
+        
+        [JsonProperty("wind")]
+        public Wind? Wind { get; set; }
+
+        [JsonProperty("clouds")]
+        public Clouds? Clouds { get; set; }
     }
 }

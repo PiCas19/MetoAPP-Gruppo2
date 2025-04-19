@@ -1,22 +1,24 @@
+using MeteoAPP.Models;
+
 namespace MeteoAPP.Services {
     public interface IParameterService
     {
-        int GetData();
-        void SetData(int newData);
+       WeatherData GetData();
+       void SetData(WeatherData newData);
     }
 
     public class ParameterService : IParameterService
     {
-        private int data = 0;
+        private WeatherData _data = new WeatherData();
 
-        public int GetData()
+        public WeatherData GetData()
         {
-            return data;
+            return _data;
         }
 
-        public void SetData(int newData)
+        public void SetData(WeatherData newData)
         {
-            data = newData;
+            _data = newData;
         }
     }
 }

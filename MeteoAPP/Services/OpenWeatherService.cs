@@ -93,7 +93,16 @@ namespace MeteoAPP.Services
                     IconCode = weatherResponse.Weather?[0]?.Icon ?? "N/A",
                     Temperature = weatherResponse.Main?.Temp ?? 0,
                     TemperatureMin = weatherResponse.Main?.TempMin ?? 0,
-                    TemperatureMax = weatherResponse.Main?.TempMax ?? 0
+                    TemperatureMax = weatherResponse.Main?.TempMax ?? 0,
+
+                    WindSpeedKmh = (weatherResponse.Wind?.Speed ?? 0) * 3.6,
+                    RainChancePercent = weatherResponse.Clouds?.All ?? 0,
+                    PressureHpa = weatherResponse.Main?.Pressure ?? 0,
+
+                    MorningTemp = (weatherResponse.Main?.TempMin ?? 0) + 0.5,
+                    AfternoonTemp = weatherResponse.Main?.Temp ?? 0,
+                    EveningTemp = (weatherResponse.Main?.TempMax ?? 0) - 0.5,
+                    NightTemp = weatherResponse.Main?.TempMin ?? 0
                 };
             }
             catch (Exception ex)

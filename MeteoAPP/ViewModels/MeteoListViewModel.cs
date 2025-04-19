@@ -193,6 +193,10 @@ namespace MeteoAPP.ViewModels
                 try
                 {
                     await _databaseService.DeleteCityAsync(city.Id);
+                    if (App.AppwriteSyncService != null)
+                    {
+                        await App.AppwriteSyncService.DeleteCityFromAppwriteAsync(city.Id);
+                    }
                     await LoadCitiesAsync();
                 }
                 catch (Exception ex)

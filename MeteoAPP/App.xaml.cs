@@ -5,11 +5,13 @@ namespace MeteoAPP;
 public partial class App : Application
 {
 	public static DatabaseService? DatabaseService { get; private set; }
+    public static AppwriteSyncService? AppwriteSyncService { get; private set; }
 
     public App()
     {
         InitializeComponent();
         DatabaseService = new DatabaseService();
+        AppwriteSyncService = new AppwriteSyncService(DatabaseService);
     }
 
     protected override async void OnStart()
@@ -19,6 +21,7 @@ public partial class App : Application
             try 
             {
                 await DatabaseService.InitializeAsync();
+                await AppwriteSyncService!.PullCitiesFromAppwriteAsync(); 
             }
             catch (Exception ex)
             {

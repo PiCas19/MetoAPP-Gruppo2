@@ -2,6 +2,8 @@ using System.Text.Json;
 using MeteoAPP.Models;
 using MeteoAPP.ViewModels;
 using MeteoAPP.Services;
+using MeteoAPP;
+
 
 namespace MeteoApp;
 
@@ -156,6 +158,18 @@ public partial class AddItemPage : ContentPage
         };
 
         await _meteoListViewModel.AddCityAsync(city);
+        try
+        {
+            if (App.AppwriteSyncService != null)
+            {
+                await App.AppwriteSyncService.PushCityToAppwriteAsync(city);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Errore sync con Appwrite: {ex.Message}");
+            await DisplayAlert("Sync Error", "Impossibile sincronizzare con Appwrite.", "OK");
+        }
         await Navigation.PopAsync();
     }
 

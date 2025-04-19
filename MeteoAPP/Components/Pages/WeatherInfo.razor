@@ -1,0 +1,90 @@
+﻿@page "/weather"
+@namespace MeteoAPP.Components.Pages
+@using MeteoAPP.Services
+@using MeteoAPP.Models
+@inject IParameterService parameterService
+@inject IJSRuntime JS
+
+<PageTitle>Weather Dashboard</PageTitle>
+
+@if (weather != null)
+{
+    <div class="container p-4">
+    <!-- General Info -->
+    <div class="card shadow-sm bg-light p-4 mb-4 text-center">
+        <h1 class="display-4">@weather.Location</h1>
+        <h2 class="display-2 fw-bold">@weather.Temperature.ToString("F0")°</h2>
+        <p class="lead mb-1">@weather.Description</p>
+        <img src="@($"https://openweathermap.org/img/wn/{weather.IconCode}@2x.png")" alt="icon" />
+        <p class="text-muted mt-2">
+            Min: @weather.TemperatureMin.ToString("F0")° / Max: @weather.TemperatureMax.ToString("F0")°
+        </p>
+    </div>
+
+    <!-- Row: Temperature Line + Wind Pie -->
+    <div class="row g-4 mb-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm bg-white p-4 h-100 text-center">
+                <h5 class="text-muted">Temperature (Daily)</h5>
+                <canvas id="tempChart" width="100%" height="150"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm bg-white p-4 h-100 text-center">
+                <h5 class="text-muted">Wind</h5>
+                <p class="fs-5">@weather.WindSpeedKmh.ToString("F0") km/h</p>
+                <canvas id="windChart" width="100" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row: Rain Pie + Pressure Pie -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm bg-white p-4 h-100 text-center">
+                <h5 class="text-muted">Rain Chance</h5>
+                <p class="fs-5">@weather.RainChancePercent.ToString("F0")%</p>
+                <canvas id="rainChart" width="100" height="100"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm bg-white p-4 h-100 text-center">
+                <h5 class="text-muted">Pressure</h5>
+                <p class="fs-5">@weather.PressureHpa.ToString("F0") hPa</p>
+                <canvas id="pressureChart" width="100" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+}
+else
+{
+    <p class="text-center mt-5 text-muted">No weather data available.</p>
+}
+
+@code {
+    private WeatherData? weather;
+
+    protected override void OnInitialized()
+    {
+        weather = parameterService.GetData();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && weather != null)
+        {
+            await JS.InvokeVoidAsync("renderTempChart", new[] {
+                weather.MorningTemp,
+                weather.AfternoonTemp,
+                weather.EveningTemp,
+                weather.NightTemp
+            });
+
+            await JS.InvokeVoidAsync("renderPieChart", "windChart", weather.WindSpeedKmh, 100, "Wind");
+            await JS.InvokeVoidAsync("renderPieChart", "rainChart", weather.RainChancePercent, 100, "Rain");
+            await JS.InvokeVoidAsync("renderPieChart", "pressureChart", weather.PressureHpa, 1100, "Pressure");
+        }
+    }
+
+}
