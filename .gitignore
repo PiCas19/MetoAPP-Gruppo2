@@ -1,1 +1,9 @@
 .DS_STORE
+MeteoApp/bin/
+MeteoApp/obj/
+config.json
+google-services.json
+GoogleService-Info.plist
+serviceAccountKey.json
+bin/
+obj/
