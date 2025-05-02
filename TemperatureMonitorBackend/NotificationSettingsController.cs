@@ -6,6 +6,13 @@ using BackendProject;
 
 namespace BackendProject.Controllers
 {
+
+    public class TokenUpdateRequest
+    {
+        public string OldToken { get; set; }
+        public string NewToken { get; set; }
+    }
+
     /// <summary>
     /// Controller per la gestione delle impostazioni di notifica degli utenti.
     /// Espone endpoint RESTful per il salvataggio e il recupero delle soglie personalizzate.
@@ -99,6 +106,66 @@ namespace BackendProject.Controllers
 
             return Ok(results);
         }
+
+        /// <summary>
+        /// Endpoint POST per aggiornare il token FCM.
+        /// </summary>
+        /// <param name="requets">DTO di richiesta per l'aggiornamento del token FCM</param>
+        /// <returns>Messaggio di conferm dell'aggiornamento del token</returns>
+
+        [HttpPost("update-token")]
+        public async Task<IActionResult> UpdateToken([FromBody] TokenUpdateRequest request)
+        {
+            if (string.IsNullOrEmpty(request.OldToken) || string.IsNullOrEmpty(request.NewToken))
+                return BadRequest("Token non valido.");
+
+            var settingsRef = _firestoreDb.Collection("settings");
+            var query = settingsRef.WhereEqualTo("Token", request.OldToken);
+            var snapshot = await query.GetSnapshotAsync();
+
+            if (snapshot.Count == 0)
+                return NotFound("Nessun documento associato al vecchio token.");
+
+            foreach (var doc in snapshot.Documents)
+            {
+                var docRef = settingsRef.Document(doc.Id);
+                var updates = new Dictionary<string, object>
+                {
+                    { "Token", request.NewToken }
+                };
+                await docRef.UpdateAsync(updates);
+            }
+
+            return Ok(new { message = "Token aggiornato con successo." });
+        }
+
+        /// <summary>
+        /// Endpoint DELETE per cancellare il token FCM.
+        /// </summary>
+        /// <param name="token">Token FCM del dispositivo</param>
+        /// <param name="location">Località associata alle impostazioni</param>
+        /// <returns>Messaggio di conferm dell'aggiornamento del token</returns>
+
+        [HttpDelete("delete-token")]
+        public async Task<IActionResult> DeleteToken([FromQuery] string token, [FromQuery] string location)
+        {
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(location))
+                return BadRequest("Token e location sono obbligatori.");
+
+            var settingsRef = _firestoreDb.Collection("settings");
+            var query = settingsRef
+                .WhereEqualTo("Token", token)
+                .WhereEqualTo("Location", location);
+            var snapshot = await query.GetSnapshotAsync();
+
+            foreach (var doc in snapshot.Documents)
+            {
+                await doc.Reference.DeleteAsync();
+            }
+
+            return Ok(new { message = "Combinazione token-location rimossa con successo." });
+        }
+
 
     }
 }

@@ -17,7 +17,7 @@ namespace MeteoAPP.ViewModels
         private double _lowTemperatureThreshold = 10.0;
         private bool _isNotificationEnabled = true;
         private readonly HttpClient _httpClient;
-        private string _baseApiUrl = "";
+        private string _baseApiUrl = "https://0c99-195-176-32-157.ngrok-free.app";
 
         /// <summary>
         /// Città per cui configurare le notifiche.
@@ -85,7 +85,7 @@ namespace MeteoAPP.ViewModels
                 Console.WriteLine("⚠️ Base URL non trovato o vuoto.");
                 return;
             }
-
+            await RefreshAndUpdateTokenAsync(); 
             await LoadSettingsAsync();
         }
 
@@ -234,6 +234,41 @@ namespace MeteoAPP.ViewModels
             {
                 Console.WriteLine("Errore SaveSettingsAsync(): " + ex.Message);
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Peremtte di fare il refresh e l'update del tokne FCM
+        /// </summary>
+        public async Task RefreshAndUpdateTokenAsync()
+        {
+            try
+            {
+                var oldToken = Preferences.Get("firebase_token", "");
+                await CrossFirebaseCloudMessaging.Current.CheckIfValidAsync();
+                var newToken = await CrossFirebaseCloudMessaging.Current.GetTokenAsync();
+
+                if (!string.IsNullOrEmpty(oldToken) && oldToken != newToken)
+                {
+                    Preferences.Set("firebase_token", newToken);
+
+                    var location = $"{City.Name}, {City.Country}";
+                    var endpoint = $"{_baseApiUrl}/api/NotificationSettings/delete-token?token={oldToken}&location={Uri.EscapeDataString(location)}";
+                    var response = await _httpClient.DeleteAsync(endpoint);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("✅ Vecchio token eliminato per la location specifica.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("❌ Errore eliminazione token: " + response.ReasonPhrase);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Errore nel refresh token: " + ex.Message);
             }
         }
 
