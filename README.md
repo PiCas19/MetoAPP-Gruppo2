@@ -1,5 +1,4 @@
 # MeteoAPP-Gruppo2
-=======
 # ☁️ MeteoAPP
 **MeteoAPP** è un'applicazione mobile multipiattaforma sviluppata con .NET MAUI, che consente di consultare le previsioni meteo in tempo reale, configurare soglie personalizzate per la temperatura e ricevere notifiche push automatiche in caso di superamento.
 ## Componenti Gruppo:
