@@ -6,40 +6,56 @@
     xmlns:viewModels="clr-namespace:MeteoAPP.ViewModels"
     x:DataType="viewModels:MeteoListViewModel"
     xmlns:utils="clr-namespace:MeteoAPP.Utilities">
-    
+
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Clicked="OnAddCityClicked" />
+        <ToolbarItem Text="Add"
+                     Clicked="OnAddCityClicked"/>
     </ContentPage.ToolbarItems>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> 
-            <RowDefinition Height="*" />  
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+
         </Grid.RowDefinitions>
-        <SearchBar 
+
+        <Label
+            x:Name="ProviderLabel"
+            Text="{Binding ProviderSelected}"
+            FontSize="20"
+            FontAttributes="Bold"
+            HorizontalOptions="Center"
+            Margin="10"
+            TextColor="Black"
+            Grid.Row="0"/>
+
+        <SearchBar
             x:Name="CitySearchBar"
             Placeholder="Search for cities..."
             Text="{Binding SearchText, UpdateSourceEventName=TextChanged}"
             VerticalOptions="Start"
             Margin="10,10,10,0"
-            Grid.Row="0" />
+            Grid.Row="1"/>
 
         <RefreshView
-            Grid.Row="1"
+            Grid.Row="2"
             IsRefreshing="{Binding IsLoading}"
             Command="{Binding RefreshCommand}">
             <ListView
                 x:Name="CitiesListView"
-                ItemsSource="{Binding FilteredCities}"  
+                ItemsSource="{Binding FilteredCities}"
                 ItemTapped="OnCitySelected"
                 HasUnevenRows="True">
                 <ListView.Header>
-                    <Grid Padding="10" ColumnSpacing="10" BackgroundColor="LightGray">
+                    <Grid Padding="10"
+                          ColumnSpacing="10"
+                          BackgroundColor="LightGray">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnCurrentLocationTapped"/>
                         </Grid.GestureRecognizers>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackLayout>
                             <Label
@@ -57,17 +73,19 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:City">
                         <ViewCell>
-                            <Grid Padding="10" ColumnSpacing="5" 
-                                BackgroundColor="{OnPlatform 
+                            <Grid Padding="10"
+                                  ColumnSpacing="5"
+                                  BackgroundColor="{OnPlatform 
                                     iOS='#F2F2F2', 
                                     Android='#F2F2F2', 
                                     WinUI='#F2F2F2'}">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />    
-                                    <ColumnDefinition Width="Auto" /> 
-                                    <ColumnDefinition Width="Auto" /> 
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <StackLayout Orientation="Vertical" Grid.Column="0">
+                                <StackLayout Orientation="Vertical"
+                                             Grid.Column="0">
                                     <Label
                                         Text="{Binding Name}"
                                         FontSize="Medium"

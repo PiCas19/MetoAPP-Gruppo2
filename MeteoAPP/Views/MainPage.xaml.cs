@@ -2,7 +2,7 @@
 
 namespace MeteoAPP
 {
-     /// <summary>
+    /// <summary>
     /// Pagina iniziale dell'applicazione MeteoAPP.
     /// Contiene la logica per avviare l'interazione iniziale dell'utente.
     /// </summary>
@@ -27,10 +27,27 @@ namespace MeteoAPP
         {
             try
             {
+                string selectedProvider = providerPicker.SelectedItem?.ToString();
+
+                if (string.IsNullOrEmpty(selectedProvider))
+                {
+                    await DisplayAlert("Errore", "Seleziona un provider meteo prima di continuare.", "OK");
+                    return;
+                }
+
+                if (selectedProvider == "OpenWeather")
+                {
+                    // Naviga alla ListMeteoPage che usa già OpenWeatherService
+                    await Navigation.PushAsync(new ListMeteoPage(selectedProvider));
+                }
+                else
+                {
+                    await DisplayAlert("Provider non supportato", "Per ora è disponibile solo OpenWeather.", "OK");
+                }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Unable to proceed: {ex.Message}", "OK");
+                await DisplayAlert("Errore", $"Errore durante l'avvio: {ex.Message}", "OK");
             }
         }
     }

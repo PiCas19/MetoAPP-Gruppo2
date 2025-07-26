@@ -11,45 +11,64 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label 
+        <Label
             Grid.Row="0"
             x:Name="AppTitle"
             Text="MeteoApp"
             FontSize="36"
             FontAttributes="Bold"
             HorizontalOptions="Center"
-            TextColor="Black" />
+            TextColor="Black"/>
 
-        <VerticalStackLayout 
+        <VerticalStackLayout
             Grid.Row="1"
             Spacing="20"
             HorizontalOptions="Center"
             VerticalOptions="Center">
-            
-            <Border 
+
+            <Border
                 Stroke="#E0E0E0"
                 StrokeThickness="2"
                 BackgroundColor="White"
                 Padding="20"
                 StrokeShape="RoundRectangle 20">
-                <Image 
+                <Image
                     Source="app_logo.png"
                     HeightRequest="250"
                     WidthRequest="250"
                     Aspect="AspectFit"/>
             </Border>
 
-            <Label 
+            <Label
+                Text="Scegli il provider meteo:"
+                FontAttributes="Bold"
+                FontSize="16"
+                TextColor="Black"
+                HorizontalOptions="Center"/>
+
+            <Picker x:Name="providerPicker"
+                    Title="Provider"
+                    WidthRequest="250"
+                    HorizontalOptions="Center">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>OpenWeather</x:String>
+                        <x:String>WeatherAPI</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Label
                 x:Name="AppDescription"
                 Text="Scopri il meteo in tempo reale. Ovunque, Sempre."
                 FontSize="18"
                 HorizontalOptions="Center"
                 TextColor="Gray"
                 HorizontalTextAlignment="Center"
-                Padding="10,0" />
+                Padding="10,0"/>
         </VerticalStackLayout>
 
-        <Button 
+        <Button
             Grid.Row="2"
             Text="Inizia la tua Avventura Meteo"
             BackgroundColor="#4CAF50"
@@ -59,6 +78,7 @@
             CornerRadius="10"
             HorizontalOptions="Fill"
             Margin="20,0"
-            Clicked="OnStartClicked" />
+            Clicked="OnStartClicked"/>
     </Grid>
+
 </ContentPage>

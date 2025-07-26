@@ -17,10 +17,12 @@ namespace MeteoAPP
         private readonly OpenWeatherService _weatherService;
         private readonly GeoLocationService _locationService;
 
+        public string SelectedProvider { get; set; }
+
         /// <summary>
         /// Costruttore della pagina. Inizializza i servizi e il ViewModel.
         /// </summary>
-        public ListMeteoPage()
+        public ListMeteoPage(string selectedProvider)
         {
             InitializeComponent();
             _locationService = new GeoLocationService();
@@ -28,6 +30,7 @@ namespace MeteoAPP
             _ = _weatherService.InitializeAsync();
             _viewModel = new MeteoListViewModel(_locationService, _weatherService);
             BindingContext = _viewModel;
+            ProviderLabel.Text = $"{selectedProvider}";
             Loaded += async (s, e) => await LoadDataAsync();
         }
 
@@ -162,7 +165,7 @@ namespace MeteoAPP
                 }
             }
         }
-        
+
         /// <summary>
         /// Carica il meteo corrente basato sulla posizione geografica rilevata.
         /// </summary>
