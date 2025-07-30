@@ -34,15 +34,9 @@ namespace MeteoAPP
                     await DisplayAlert("Errore", "Seleziona un provider meteo prima di continuare.", "OK");
                     return;
                 }
-
-                if (selectedProvider == "OpenWeather")
-                {
-                    // Naviga alla ListMeteoPage che usa già OpenWeatherService
-                    await Navigation.PushAsync(new ListMeteoPage(selectedProvider));
-                }
                 else
                 {
-                    await DisplayAlert("Provider non supportato", "Per ora è disponibile solo OpenWeather.", "OK");
+                    await Navigation.PushAsync(new ListMeteoPage(selectedProvider));
                 }
             }
             catch (Exception ex)

@@ -7,11 +7,10 @@ namespace MeteoAPP.Services
     /// Servizio per il recupero dei dati meteo da OpenWeather API.
     /// Gestisce la configurazione dell'API key e le richieste HTTP verso l'endpoint meteo.
     /// </summary>
-    public class OpenWeatherService
+    public class OpenWeatherService : IWeatherService
     {
         private readonly HttpClient _httpClient;
         private string _apiKey = "";
-
 
         /// <summary>
         /// Costruttore della classe <see cref="OpenWeatherService"/>.
@@ -22,10 +21,7 @@ namespace MeteoAPP.Services
             _httpClient = new HttpClient();
         }
 
-        /// <summary>
-        /// Inizializza il servizio caricando la chiave API da file di configurazione.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Sollevata se la chiave API non è disponibile.</exception>
+        /// <inheritdoc />
         public async Task InitializeAsync()
         {
             await ConfigService.Instance.InitializeAsync();
@@ -35,12 +31,7 @@ namespace MeteoAPP.Services
                 throw new InvalidOperationException("API Key non trovata nel config.json");
         }
 
-        /// <summary>
-        /// Recupera i dati meteo per una data posizione geografica.
-        /// </summary>
-        /// <param name="latitude">Latitudine della località.</param>
-        /// <param name="longitude">Longitudine della località.</param>
-        /// <returns>Un oggetto <see cref="WeatherData"/> contenente le informazioni meteo, oppure <c>null</c> in caso di errore.</returns>
+        /// <inheritdoc />
         public async Task<WeatherData?> GetWeatherByCoordinatesAsync(double latitude, double longitude)
         {
             try
@@ -69,7 +60,7 @@ namespace MeteoAPP.Services
                     NightTemp = weatherResponse.Main?.TempMin ?? 0
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

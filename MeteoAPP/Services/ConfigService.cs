@@ -72,6 +72,7 @@ namespace MeteoAPP.Services
 
         public string? GetBaseApiUrl() => Config?.NotificationSettingsBaseUrl?.TrimEnd('/');
         public string? GetOpenWeatherApiKey() => Config?.OpenWeatherApiKey;
+        public string? GetWeatherApiKey() => Config?.WeatherApiKey;
         public string? GetAppwriteProjectId() => Config?.AppwriteProjectId;
         public string? GetAppwriteApiKey() => Config?.AppwriteApiKey;
         public string? GetAppwriteDatabaseId() => Config?.AppwriteDatabaseId;

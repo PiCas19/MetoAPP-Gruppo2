@@ -1,3 +1,4 @@
+
 using MeteoAPP.ViewModels;
 using MeteoAPP.Models;
 using MeteoAPP.Services;
@@ -6,37 +7,41 @@ using MeteoApp;
 
 namespace MeteoAPP
 {
-    /// <summary>
-    /// Pagina principale che mostra la lista delle città monitorate.
-    /// Consente l'aggiunta, l'eliminazione, la configurazione delle notifiche
-    /// e la visualizzazione dei dettagli meteo.
-    /// </summary>
     public partial class ListMeteoPage : ContentPage
     {
         private readonly MeteoListViewModel _viewModel;
-        private readonly OpenWeatherService _weatherService;
+        private readonly IWeatherService _weatherService;
         private readonly GeoLocationService _locationService;
 
         public string SelectedProvider { get; set; }
 
-        /// <summary>
-        /// Costruttore della pagina. Inizializza i servizi e il ViewModel.
-        /// </summary>
         public ListMeteoPage(string selectedProvider)
         {
             InitializeComponent();
             _locationService = new GeoLocationService();
-            _weatherService = new OpenWeatherService();
+            SelectedProvider = selectedProvider;
+
+            if (SelectedProvider.Equals("OpenWeather", StringComparison.OrdinalIgnoreCase))
+            {
+                _weatherService = new OpenWeatherService();
+            }
+            else if (SelectedProvider.Equals("WeatherAPI", StringComparison.OrdinalIgnoreCase))
+            {
+                _weatherService = new WeatherApiService();
+            }
+            else
+            {
+                throw new InvalidOperationException("Provider meteo non riconosciuto.");
+            }
+
             _ = _weatherService.InitializeAsync();
+
             _viewModel = new MeteoListViewModel(_locationService, _weatherService);
             BindingContext = _viewModel;
-            ProviderLabel.Text = $"{selectedProvider}";
+            ProviderLabel.Text = $"{SelectedProvider}";
             Loaded += async (s, e) => await LoadDataAsync();
         }
 
-        /// <summary>
-        /// Carica i dati delle città salvate e della posizione corrente all'avvio della pagina.
-        /// </summary>
         private async Task LoadDataAsync()
         {
             try
@@ -55,11 +60,7 @@ namespace MeteoAPP
                 await DisplayAlert("Error", "Unable to upload cities", "OK");
             }
         }
-        /// <summary>
-        /// Naviga alla pagina di aggiunta città.
-        /// </summary>
-        /// <param name="sender">Oggetto che ha generato l'evento.</param>
-        /// <param name="e">Dati dell'evento.</param>
+
         private async void OnAddCityClicked(object sender, EventArgs e)
         {
             try
@@ -73,11 +74,6 @@ namespace MeteoAPP
             }
         }
 
-        /// <summary>
-        /// Mostra il meteo dettagliato per la città selezionata nella lista.
-        /// </summary>
-        /// <param name="sender">Oggetto che ha generato l'evento.</param>
-        /// <param name="e">Dati dell'evento di selezione.</param>
         private async void OnCitySelected(object sender, ItemTappedEventArgs e)
         {
             if (e.Item == null)
@@ -119,11 +115,7 @@ namespace MeteoAPP
                 }
             }
         }
-        /// <summary>
-        /// Elimina una città dalla lista salvata dopo conferma da parte dell’utente.
-        /// </summary>
-        /// <param name="sender">Pulsante premuto per eliminare.</param>
-        /// <param name="e">Dati dell'evento di click.</param>
+
         private async void OnDeleteItemInvoked(object sender, EventArgs e)
         {
             if (sender is Button button && button.CommandParameter is City city)
@@ -143,11 +135,6 @@ namespace MeteoAPP
             }
         }
 
-        /// <summary>
-        /// Apre la pagina delle impostazioni di notifica per la città selezionata.
-        /// </summary>
-        /// <param name="sender">Pulsante premuto per accedere alle impostazioni.</param>
-        /// <param name="e">Dati dell'evento.</param>
         private async void OnSettingsButtonClicked(object sender, EventArgs e)
         {
             if (sender is Button button && button.CommandParameter is City city)
@@ -166,11 +153,6 @@ namespace MeteoAPP
             }
         }
 
-        /// <summary>
-        /// Carica il meteo corrente basato sulla posizione geografica rilevata.
-        /// </summary>
-        /// <param name="sender">Oggetto che ha generato il tap.</param>
-        /// <param name="e">Dati dell'evento.</param>
         private async void OnCurrentLocationTapped(object sender, EventArgs e)
         {
             try

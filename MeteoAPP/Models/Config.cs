@@ -1,5 +1,6 @@
 
-namespace MeteoAPP.Models {
+namespace MeteoAPP.Models
+{
     /// <summary>
     /// Modello di configurazione contenente le chiavi e gli identificativi per l'integrazione con servizi esterni.
     /// Caricato da un file JSON (es. config.json).
@@ -10,6 +11,10 @@ namespace MeteoAPP.Models {
         /// API key per accedere al servizio di previsioni meteo OpenWeather.
         /// </summary>
         public string? OpenWeatherApiKey { get; set; }
+        /// <summary>
+        /// API key per accedere al servizio di previsioni meteo WeatherApi.
+        /// </summary>
+        public string? WeatherApiKey { get; set; }
         /// <summary>
         /// Identificativo del progetto Appwrite.
         /// </summary>
