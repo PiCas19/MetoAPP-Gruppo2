@@ -1,7 +1,8 @@
 using Newtonsoft.Json;
+using System.Collections.Generic;
+
 namespace MeteoAPP.Models
 {
-
     public class WeatherSecondResponse
     {
         [JsonProperty("location")]
@@ -9,134 +10,83 @@ namespace MeteoAPP.Models
 
         [JsonProperty("current")]
         public Current Current { get; set; } = null!;
+
+        [JsonProperty("forecast")]
+        public Forecast Forecast { get; set; } = null!;
     }
 
     public class Location
     {
         [JsonProperty("name")]
-        public string? Name { get; set; }
-
-        [JsonProperty("region")]
-        public string? Region { get; set; }
-
-        [JsonProperty("country")]
-        public string? Country { get; set; }
-
-        [JsonProperty("lat")]
-        public double? Lat { get; set; }
-
-        [JsonProperty("lon")]
-        public double? Lon { get; set; }
-
-        [JsonProperty("tz_id")]
-        public string? TzId { get; set; }
-
-        [JsonProperty("localtime_epoch")]
-        public long? LocaltimeEpoch { get; set; }
-
-        [JsonProperty("localtime")]
-        public string? Localtime { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public class Current
     {
-        [JsonProperty("last_updated_epoch")]
-        public long? LastUpdatedEpoch { get; set; }
-
-        [JsonProperty("last_updated")]
-        public string? LastUpdated { get; set; }
-
         [JsonProperty("temp_c")]
-        public double? TempC { get; set; }
-
-        [JsonProperty("temp_f")]
-        public double? TempF { get; set; }
-
-        [JsonProperty("is_day")]
-        public int? IsDay { get; set; }
+        public double TempC { get; set; }
 
         [JsonProperty("condition")]
         public Condition Condition { get; set; } = null!;
 
-        [JsonProperty("wind_mph")]
-        public double? WindMph { get; set; }
-
         [JsonProperty("wind_kph")]
-        public double? WindKph { get; set; }
-
-        [JsonProperty("wind_degree")]
-        public int? WindDegree { get; set; }
-
-        [JsonProperty("wind_dir")]
-        public string? WindDir { get; set; }
+        public double WindKph { get; set; }
 
         [JsonProperty("pressure_mb")]
-        public double? PressureMb { get; set; }
+        public double PressureMb { get; set; }
+    }
 
-        [JsonProperty("pressure_in")]
-        public double? PressureIn { get; set; }
+    public class Forecast
+    {
+        [JsonProperty("forecastday")]
+        public List<ForecastDay> ForecastDays { get; set; } = new();
+    }
 
-        [JsonProperty("precip_mm")]
-        public double? PrecipMm { get; set; }
+    public class ForecastDay
+    {
+        [JsonProperty("date")]
+        public string? Date { get; set; }
 
-        [JsonProperty("precip_in")]
-        public double? PrecipIn { get; set; }
+        [JsonProperty("day")]
+        public Day Day { get; set; } = null!;
 
-        [JsonProperty("humidity")]
-        public int? Humidity { get; set; }
+        [JsonProperty("hour")]
+        public List<Hour> Hours { get; set; } = new();
+    }
 
-        [JsonProperty("cloud")]
-        public int? Cloud { get; set; }
+    public class Day
+    {
+        [JsonProperty("maxtemp_c")]
+        public double MaxTempC { get; set; }
 
-        [JsonProperty("feelslike_c")]
-        public double? FeelslikeC { get; set; }
+        [JsonProperty("mintemp_c")]
+        public double MinTempC { get; set; }
 
-        [JsonProperty("feelslike_f")]
-        public double? FeelslikeF { get; set; }
+        [JsonProperty("condition")]
+        public Condition Condition { get; set; } = null!;
 
-        [JsonProperty("windchill_c")]
-        public double? WindchillC { get; set; }
+        [JsonProperty("daily_chance_of_rain")]
+        public double DailyChanceOfRain { get; set; }
+    }
 
-        [JsonProperty("windchill_f")]
-        public double? WindchillF { get; set; }
+    public class Hour
+    {
+        [JsonProperty("time")]
+        public string Time { get; set; } = string.Empty;
 
-        [JsonProperty("heatindex_c")]
-        public double? HeatindexC { get; set; }
-
-        [JsonProperty("heatindex_f")]
-        public double? HeatindexF { get; set; }
-
-        [JsonProperty("dewpoint_c")]
-        public double? DewpointC { get; set; }
-
-        [JsonProperty("dewpoint_f")]
-        public double? DewpointF { get; set; }
-
-        [JsonProperty("vis_km")]
-        public double? VisKm { get; set; }
-
-        [JsonProperty("vis_miles")]
-        public double? VisMiles { get; set; }
-
-        [JsonProperty("uv")]
-        public double? Uv { get; set; }
-
-        [JsonProperty("gust_mph")]
-        public double? GustMph { get; set; }
-
-        [JsonProperty("gust_kph")]
-        public double? GustKph { get; set; }
+        [JsonProperty("temp_c")]
+        public double TempC { get; set; }
     }
 
     public class Condition
     {
         [JsonProperty("text")]
-        public string? Text { get; set; }
+        public string Text { get; set; } = string.Empty;
 
         [JsonProperty("icon")]
-        public string? Icon { get; set; }
+        public string Icon { get; set; } = string.Empty;
 
         [JsonProperty("code")]
-        public int? Code { get; set; }
+        public int Code { get; set; }
     }
 }
