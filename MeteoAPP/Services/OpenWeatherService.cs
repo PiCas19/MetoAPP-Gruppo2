@@ -36,13 +36,13 @@ namespace MeteoAPP.Services
         {
             try
             {
-                var url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={_apiKey}&units=metric";
+
+                var url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid=e67488d5bc369d848639ee03d0b0e5ac&units=metric";
                 var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
                 var json = await response.Content.ReadAsStringAsync();
                 var weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(json);
-
                 return weatherResponse == null ? null : new WeatherData
                 {
                     Location = weatherResponse.Name ?? "N/A",
@@ -59,9 +59,12 @@ namespace MeteoAPP.Services
                     EveningTemp = (weatherResponse.Main?.TempMax ?? 0) - 0.5,
                     NightTemp = weatherResponse.Main?.TempMin ?? 0
                 };
+
             }
-            catch (Exception)
+
+            catch (Exception e)
             {
+                Android.Util.Log.Debug("MeteoAPP", e.Message);
                 return null;
             }
         }

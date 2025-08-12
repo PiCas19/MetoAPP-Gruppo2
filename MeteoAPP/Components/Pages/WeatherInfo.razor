@@ -55,6 +55,16 @@
             </div>
         </div>
     </div>
+    <!-- Row: 7 Days History -->
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm bg-white p-4 text-center">
+                <h5 class="text-muted">Storico Meteo - Ultimi 7 Giorni</h5>
+                <canvas id="historyChart" width="100%" height="150"></canvas>
+            </div>
+        </div>
+    </div>
+
 </div>
 }
 else
@@ -64,11 +74,19 @@ else
 
 @code {
     private WeatherData? weather;
+    private List<WeatherHistory> last7Days = new();
 
-    protected override void OnInitialized()
+
+protected override async Task OnInitializedAsync()
+{
+    weather = parameterService.GetData();
+
+    if (weather != null)
     {
-        weather = parameterService.GetData();
+        last7Days = await parameterService.GetLast7DaysHistoryAsync(weather.Location);
     }
+}
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -84,7 +102,10 @@ else
             await JS.InvokeVoidAsync("renderPieChart", "windChart", weather.WindSpeedKmh, 100, "Wind");
             await JS.InvokeVoidAsync("renderPieChart", "rainChart", weather.RainChancePercent, 100, "Rain");
             await JS.InvokeVoidAsync("renderPieChart", "pressureChart", weather.PressureHpa, 1100, "Pressure");
+            var labels = last7Days.Select(d => d.Date.ToString("dd MMM")).ToArray();
+            var tempMin = last7Days.Select(d => d.TemperatureMin).ToArray();
+            var tempMax = last7Days.Select(d => d.TemperatureMax).ToArray();
+            await JS.InvokeVoidAsync("renderHistoryChart", labels, tempMin, tempMax);
         }
     }
-
 }

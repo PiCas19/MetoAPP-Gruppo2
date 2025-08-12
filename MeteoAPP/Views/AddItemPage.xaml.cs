@@ -12,7 +12,7 @@ namespace MeteoApp;
 /// Integra una mappa Leaflet.js via WebView per la selezione interattiva.
 /// </summary>
 [QueryProperty("ViewModel", "ViewModel")]
-[QueryProperty ("GeoLocationService", "GeoLocationService")]
+[QueryProperty("GeoLocationService", "GeoLocationService")]
 public partial class AddItemPage : ContentPage
 {
     private readonly MeteoListViewModel _meteoListViewModel;
@@ -24,7 +24,7 @@ public partial class AddItemPage : ContentPage
     /// </summary>
     /// <param name="viewModel">ViewModel principale della lista meteo.</param>
     /// <param name="geoLocationService">Servizio di geolocalizzazione.</param>
-    public AddItemPage(MeteoListViewModel viewModel, GeoLocationService geoLocationService )
+    public AddItemPage(MeteoListViewModel viewModel, GeoLocationService geoLocationService)
     {
         InitializeComponent();
         _meteoListViewModel = viewModel;
@@ -32,11 +32,11 @@ public partial class AddItemPage : ContentPage
         _locationService = geoLocationService;
         BindingContext = _addItemViewModel;
 
-        #if ANDROID
-                MapWebView.Source = "file:///android_asset/map.html";
-        #else
+#if ANDROID
+        MapWebView.Source = "file:///android_asset/map.html";
+#else
                 MapWebView.Source = "map.html";
-        #endif
+#endif
 
         MapWebView.Navigating += WebView_Navigating!;
         MapWebView.Navigated += OnWebViewNavigated!;
@@ -55,7 +55,7 @@ public partial class AddItemPage : ContentPage
             LoadingIndicator.IsRunning = true;
 
             var locationResult = await _locationService.GetCurrentLocationAsync();
-            
+
             if (locationResult.Success)
             {
                 _addItemViewModel.Latitude = locationResult.Latitude;
@@ -174,6 +174,7 @@ public partial class AddItemPage : ContentPage
     /// <param name="e">EventArgs.</param>
     private async void OnSaveButtonClicked(object sender, EventArgs e)
     {
+        /* da fare stessa cosa fatta onstart */
         var city = new City
         {
             Name = _addItemViewModel.CityName,

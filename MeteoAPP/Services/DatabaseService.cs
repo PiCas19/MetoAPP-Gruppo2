@@ -19,17 +19,17 @@ namespace MeteoAPP.Services
         /// </summary>
         public DatabaseService()
         {
-            try 
+            try
             {
                 var dbPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "meteo.db3"
                 );
-                
+
                 var directoryPath = Path.GetDirectoryName(dbPath);
                 if (!Directory.Exists(directoryPath))
                 {
-                    try 
+                    try
                     {
                         Directory.CreateDirectory(directoryPath!);
                     }
@@ -58,6 +58,7 @@ namespace MeteoAPP.Services
                 try
                 {
                     await _databaseConnection.CreateTableAsync<City>();
+                    await _databaseConnection.CreateTableAsync<WeatherHistory>();
                     var existingCities = await _databaseConnection.Table<City>().ToListAsync();
 
                     if (!existingCities.Any())
@@ -98,7 +99,7 @@ namespace MeteoAPP.Services
                 new City { Name = "Tokyo", Country = "Giappone", Latitude = 35.6762, Longitude = 139.6503 }
             };
 
-            try 
+            try
             {
                 await _databaseConnection.InsertAllAsync(cities);
             }
@@ -185,6 +186,49 @@ namespace MeteoAPP.Services
         {
             await InitializeAsync();
             return await _databaseConnection.DeleteAsync<City>(id);
+        }
+
+        /// <summary>
+        /// Aggiunge una nuova voce di cronologia meteo al database.
+        /// </summary>
+        /// <param name="history">Oggetto <see cref="WeatherHistory"/> contenente i dati meteo da salvare.</param>
+        /// <returns>ID della riga inserita.</returns>
+        public async Task<int> AddWeatherHistoryAsync(WeatherHistory history)
+        {
+            await InitializeAsync();
+            return await _databaseConnection.InsertAsync(history);
+        }
+
+        public async Task ClearWeatherHistoryAsync()
+        {
+            await InitializeAsync();
+            await _databaseConnection.ExecuteAsync("DELETE FROM WeatherHistory");
+        }
+
+        public async Task LogAllWeatherHistoryAsync()
+        {
+            var allEntries = await _databaseConnection.Table<WeatherHistory>().ToListAsync();
+            foreach (var entry in allEntries)
+            {
+                Android.Util.Log.Debug("MeteoAPP", $"ID: {entry.Id}, City: {entry.CityName}, Date: {entry.Date.ToShortDateString()}, TempMin: {entry.TemperatureMin}, TempMax: {entry.TemperatureMax}, Desc: {entry.Description}");
+            }
+        }
+
+        public async Task<List<WeatherHistory>> GetLast7DaysWeatherByCityAsync(string cityName)
+        {
+            await InitializeAsync();
+            Android.Util.Log.Debug("MeteoAPP", $"GetLast7DaysWeatherByCityAsync - City: {cityName}");
+
+            var result = await _databaseConnection.Table<WeatherHistory>()
+                                                 .Where(wh => wh.CityName == cityName)
+                                                 .ToListAsync();
+
+            if (result == null)
+                Android.Util.Log.Debug("MeteoAPP", $"Nessun dato trovato per la città {cityName}");
+            else
+                Android.Util.Log.Debug("MeteoAPP", $"Trovati {result.Count} record per la città {cityName}");
+
+            return result;
         }
     }
 }

@@ -65,6 +65,8 @@ namespace MeteoAPP
         {
             try
             {
+                Android.Util.Log.Debug("MeteoAPP", "aggiunto");
+
                 var addItemPage = new AddItemPage(_viewModel, _locationService);
                 await Navigation.PushAsync(addItemPage);
             }

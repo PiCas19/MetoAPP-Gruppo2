@@ -35,17 +35,42 @@ public partial class App : Application
     /// </summary>
     protected override async void OnStart()
     {
+
         if (DatabaseService != null)
         {
-            try 
+            try
             {
                 await DatabaseService.InitializeAsync();
                 await AppwriteSyncService!.InitializeAsync();
-                await AppwriteSyncService!.PullCitiesFromAppwriteAsync(); 
+                await AppwriteSyncService!.PullCitiesFromAppwriteAsync();
+                var cities = await App.DatabaseService.GetAllCityAsync();
+                var weatherService = new OpenWeatherService();
+
+                foreach (var city in cities)
+                {
+                    var existingHistory = await App.DatabaseService.GetLast7DaysWeatherByCityAsync(city.Name);
+
+                    bool hasToday = existingHistory.Any(h => h.Date == DateTime.UtcNow.Date);
+
+                    if (!hasToday)
+                    {
+                        var weather = await weatherService.GetWeatherByCoordinatesAsync(city.Latitude, city.Longitude);
+                        var history = new Models.WeatherHistory
+                        {
+                            CityName = city.Name,
+                            Date = DateTime.UtcNow.Date,
+                            TemperatureMin = weather?.TemperatureMin ?? 0,
+                            TemperatureMax = weather?.TemperatureMax ?? 0,
+                            Description = weather?.Description ?? "N/A",
+                        };
+                        await App.DatabaseService.AddWeatherHistoryAsync(history);
+                        await DatabaseService.LogAllWeatherHistoryAsync();
+                    }
+                }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Errore inizializzazione App: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Errore inizializzazione AppShell: {ex.Message}");
             }
         }
     }

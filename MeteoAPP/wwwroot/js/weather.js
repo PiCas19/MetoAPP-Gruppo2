@@ -76,3 +76,36 @@ window.renderPieChart = (canvasId, value, maxValue, label) => {
         }
     });
 };
+// Line chart: storico ultimi 7 giorni (temp min e max)
+window.renderHistoryChart = (labels, tempMin, tempMax) => {
+    const ctx = document.getElementById("historyChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Temp Min",
+                    data: tempMin,
+                    borderColor: "blue",
+                    fill: false
+                },
+                {
+                    label: "Temp Max",
+                    data: tempMax,
+                    borderColor: "red",
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+};
