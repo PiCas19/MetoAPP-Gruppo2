@@ -230,5 +230,37 @@ namespace MeteoAPP.Services
 
             return result;
         }
+
+        /// <summary>
+        /// Restituisce tutti i record di storico meteo.
+        /// </summary>
+        public async Task<List<WeatherHistory>> GetAllWeatherHistoryAsync()
+        {
+            await InitializeAsync();
+            return await _databaseConnection.Table<WeatherHistory>().ToListAsync();
+        }
+
+        /// <summary>
+        /// Sostituisce completamente le tabelle Cities e WeatherHistory con i dati forniti.
+        /// </summary>
+        public async Task ReplaceAllAsync(List<City> cities, List<WeatherHistory> history)
+        {
+            await InitializeAsync();
+
+            // Esegue tutte le operazioni in una transazione
+            await _databaseConnection.RunInTransactionAsync(conn =>
+            {
+                // Svuota le tabelle
+                conn.DeleteAll<WeatherHistory>();
+                conn.DeleteAll<City>();
+
+                // Re-inserisce i dati (se presenti)
+                if (cities != null && cities.Count > 0)
+                    conn.InsertAll(cities);
+
+                if (history != null && history.Count > 0)
+                    conn.InsertAll(history);
+            });
+        }
     }
 }

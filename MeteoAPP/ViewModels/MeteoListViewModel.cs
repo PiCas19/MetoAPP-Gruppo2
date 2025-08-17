@@ -9,6 +9,7 @@ namespace MeteoAPP.ViewModels
     public class MeteoListViewModel : BaseViewModel
     {
         private readonly DatabaseService _databaseService;
+        public DatabaseService DatabaseService => _databaseService;
         private readonly GeoLocationService _locationService;
         private readonly IWeatherService _weatherService;
         private ObservableCollection<City> _cities;

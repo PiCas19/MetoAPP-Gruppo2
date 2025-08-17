@@ -8,6 +8,10 @@
     xmlns:utils="clr-namespace:MeteoAPP.Utilities">
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Export"
+                Clicked="OnExportClicked"/>
+        <ToolbarItem Text="Import"
+                Clicked="OnImportClicked"/>
         <ToolbarItem Text="Add"
                      Clicked="OnAddCityClicked"/>
     </ContentPage.ToolbarItems>

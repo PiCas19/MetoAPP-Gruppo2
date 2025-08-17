@@ -4,6 +4,7 @@ using MeteoAPP.Models;
 using MeteoAPP.Services;
 using System.Diagnostics;
 using MeteoApp;
+using System.Text;
 
 namespace MeteoAPP
 {
@@ -202,6 +203,80 @@ namespace MeteoAPP
             {
                 LoadingIndicator.IsVisible = false;
                 LoadingIndicator.IsRunning = false;
+            }
+        }
+
+        private async void OnExportClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var exportService = new ExportImportService(_viewModel.DatabaseService);
+                var path = await exportService.ExportAsync();
+                await DisplayAlert("Esporta", $"Backup creato:\n{path}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Errore", $"Esportazione fallita: {ex.Message}", "OK");
+            }
+        }
+
+        private async void OnImportClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var exportService = new ExportImportService(_viewModel.DatabaseService);
+
+                // Percorso predefinito nella cartella locale
+                var path = Path.Combine(FileSystem.AppDataDirectory, "meteoapp-backup.json");
+
+                if (!File.Exists(path))
+                {
+                    await DisplayAlert("Importa", "Nessun backup trovato nella cartella locale. Effettua prima un'export.", "OK");
+                    return;
+                }
+
+                // Leggi il JSON e mostralo in anteprima
+                var json = await File.ReadAllTextAsync(path, Encoding.UTF8);
+                var preview = TryPrettyJson(json, maxChars: 1800);
+
+                bool conferma = await DisplayAlert("Anteprima backup JSON", preview, "Importa", "Annulla");
+                if (!conferma)
+                    return;
+
+                // Se confermato → Importa con validazione
+                await exportService.ImportAsync();
+                await _viewModel.LoadCitiesAsync();
+                await DisplayAlert("Importa", "Dati importati correttamente dal backup locale.", "OK");
+            }
+            catch (InvalidDataException ex)
+            {
+                await DisplayAlert("Validazione fallita", ex.Message, "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Errore", $"Importazione fallita: {ex.Message}", "OK");
+            }
+        }
+        private static string TryPrettyJson(string raw, int maxChars)
+        {
+            try
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                var pretty = System.Text.Json.JsonSerializer.Serialize(doc.RootElement, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                return pretty.Length > maxChars
+                    ? pretty.Substring(0, maxChars) + "\n… (contenuto troncato)"
+                    : pretty;
+            }
+            catch
+            {
+                // Se non è JSON valido mostriamo comunque il testo grezzo
+                return raw.Length > maxChars
+                    ? raw.Substring(0, maxChars) + "\n… (contenuto troncato)"
+                    : raw;
             }
         }
     }
